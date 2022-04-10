@@ -1,7 +1,8 @@
 # Fuzzy parking
 
-The aim of the project was to develop a script for autonomous parking with the use of fuzzy sets. 
+The aim of the project is to create three different models for autonomous parking.
 
-## Running program
+* Genetic algorythm
+* Fuzzy sets
+* Deep learning
 
-![Alt Program](https://media.giphy.com/media/JXTp1UpXbWzID9agNS/giphy.gif)
