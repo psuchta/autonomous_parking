@@ -47,7 +47,7 @@ class Car(pygame.sprite.Sprite):
     self.position.x += self.scale_position_change(x_change, dt)
     self.position.y -= self.scale_position_change(y_change, dt)
     self.rect.center = self.position
-    self.check_collision(x_change, y_change, dt)
+    # self.check_collision(x_change, y_change, dt)
     self.rotate()
 
   def rotate(self):
