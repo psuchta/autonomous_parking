@@ -39,20 +39,11 @@ class Game:
     self.walls = pygame.sprite.Group()
     # self.add_car(AutonomousCar(600, 240 + 64))
 
-    # Create walls starting from 0 (x) 140 (y)
-    # Center of the parking slot is 40(x)
-    # Slot width is 80 px
-    # Slot height is 140 px
-
-    # self.parking_slot = ParkingSlot(0, 140, 140, 80, 140)
-    # for w in self.parking_slot.walls:
-    #   self.all_sprites.add(w)
-    #   self.walls.add(w)
-
-    self.level = Level({'path': 'map/parking1.csv'})
+    self.level = Level({'path': 'map/road.csv'})
     for o in self.level.level_objects:
       self.all_sprites.add(o)
-    self.add_car(ControllerCar(400, 140 + 64))
+    self.add_car(ControllerCar(Car.HEIGHT/2, screen_height - Car.HEIGHT - 40))
+    self.add_cars_with_slot()
 
   def add_car(self, car):
     self.cars.append(car)
@@ -65,6 +56,19 @@ class Game:
         car.autonomouse_steering(dt)
       else:
         car.update(dt)
+
+  def add_cars_with_slot(self):
+    # Empty space between cars
+    empty_space = 0
+    for car_number in range(9):
+      # Add upper cars
+      self.add_car(Car(Car.HEIGHT/2 + Car.HEIGHT * car_number + empty_space, screen_height - Car.HEIGHT*2 - 20))
+      if car_number == 3:
+        empty_space += 50
+        continue
+      # Add cars at the bottom with empty parks slot
+      self.add_car(Car(Car.HEIGHT/2 + Car.HEIGHT * car_number + empty_space, screen_height - Car.HEIGHT / 2))
+      empty_space += 20
 
 
   def run(self):

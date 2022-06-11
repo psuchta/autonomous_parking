@@ -13,6 +13,7 @@ class Car(pygame.sprite.Sprite):
   WIDTH = 64
   METER_SCALE = 32
 
+  # Center of a Car will be positioned to the given coordinates
   def __init__(self, pos_x, pos_y):
     pygame.sprite.Sprite.__init__(self)
     self.original = pygame.image.load('assets/car.png')
@@ -25,16 +26,15 @@ class Car(pygame.sprite.Sprite):
   def init_moving(self, x, y, angle=0.0, length=80, max_steering=35, max_acceleration=5.0):
     self.position = pygame.Vector2(x, y)
     self.velocity = pygame.Vector2(0.0, 0.0)
-    self.orientation = 0
     self.angle = angle
     self.length = length
     self.max_acceleration = max_acceleration
     self.max_steering = max_steering
-    self.acceleration = 0.0
-    self.steering = 0.0
     self.init_constants()
 
   def init_constants(self):
+    self.acceleration = 0.0
+    self.steering = 0.0
     self.free_deceleration = 2
     self.max_velocity = 10
     self.brake_deceleration = 10
