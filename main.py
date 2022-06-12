@@ -2,8 +2,7 @@
 import pygame
 import os
 from car import Car
-from car import AutonomousCar
-from car import ControllerCar
+from car import *
 from wall import Wall
 from wall import ParkingSlot
 from math import copysign
@@ -62,12 +61,12 @@ class Game:
     empty_space = 0
     for car_number in range(9):
       # Add upper cars
-      self.add_car(Car(Car.HEIGHT/2 + Car.HEIGHT * car_number + empty_space, screen_height - Car.HEIGHT*2 - 20))
+      self.add_car(NotSteerableCar(Car.HEIGHT/2 + Car.HEIGHT * car_number + empty_space, screen_height - Car.HEIGHT*2 - 20))
       if car_number == 3:
         empty_space += 50
         continue
       # Add cars at the bottom with empty parks slot
-      self.add_car(Car(Car.HEIGHT/2 + Car.HEIGHT * car_number + empty_space, screen_height - Car.HEIGHT / 2))
+      self.add_car(NotSteerableCar(Car.HEIGHT/2 + Car.HEIGHT * car_number + empty_space, screen_height - Car.HEIGHT / 2))
       empty_space += 20
 
 

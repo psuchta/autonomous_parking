@@ -23,7 +23,7 @@ class Car(pygame.sprite.Sprite):
     self.walls = None
     self.init_moving(pos_x, pos_y)
 
-  def init_moving(self, x, y, angle=0.0, length=80, max_steering=35, max_acceleration=5.0):
+  def init_moving(self, x, y, angle=0.0, length=2, max_steering=45, max_acceleration=3.0):
     self.position = pygame.Vector2(x, y)
     self.velocity = pygame.Vector2(0.0, 0.0)
     self.angle = angle
@@ -35,19 +35,32 @@ class Car(pygame.sprite.Sprite):
   def init_constants(self):
     self.acceleration = 0.0
     self.steering = 0.0
-    self.free_deceleration = 2
-    self.max_velocity = 10
-    self.brake_deceleration = 10
+    self.free_deceleration = 10
+    self.max_velocity = 5
+    self.brake_deceleration = 15
 
   def update(self, dt = 0):
     self.velocity += (self.acceleration * dt, 0)
     self.velocity.x = max(-self.max_velocity, min(self.velocity.x, self.max_velocity))
-    # calculate values which will shift actual position of the car 
-    x_change, y_change = self.update_position()
-    self.position.x += self.scale_position_change(x_change, dt)
-    self.position.y -= self.scale_position_change(y_change, dt)
+
+    if self.steering:
+      turning_radius = self.length / sin(radians(self.steering))
+      angular_velocity = self.velocity.x / turning_radius
+    else:
+      angular_velocity = 0
+
+    # All the move constants are in meter units. We have to scale meters to pixels
+    self.position += self.velocity.rotate(-self.angle) * dt * self.METER_SCALE
+    self.angle += degrees(angular_velocity) * dt
     self.rect.center = self.position
-    # self.check_collision(x_change, y_change, dt)
+
+    ######## OLD STEERING MODEL ############
+    # calculate values which will shift actual position of the car
+    # x_change, y_change = self.update_position()
+    # self.position.x += self.scale_position_change(x_change, dt)
+    # self.position.y -= self.scale_position_change(y_change, dt)
+    # self.rect.center = self.position
+    # self.check_collision()
     self.rotate()
 
   def rotate(self):
@@ -68,10 +81,10 @@ class Car(pygame.sprite.Sprite):
   def scale_position_change(self, point, dt):
     return point * dt * self.WIDTH / 2
 
-  def check_collision(self,x_change, y_change, dt):
+  def check_collision(self):
 
-    blocking_walls = pygame.sprite.spritecollide(self, self.walls, False, pygame.sprite.collide_mask)
-    if len(blocking_walls) > 1:
+    blocking_cars = pygame.sprite.spritecollide(self, self.walls, False, pygame.sprite.collide_mask)
+    if len(blocking_cars) > 1:
 
       # print('first collide', len(blocking_walls))
       # self.position.x += self.scale_position_change(-copysign(10, x_change), dt)
@@ -97,15 +110,17 @@ class ControllerCar(Car):
 
   def detect_steering(self, dt):
     pressed = pygame.key.get_pressed()
+    loc_max_acceleration = self.max_acceleration
 
     if pressed[self.key_mapping['up']]:
       if self.velocity.x < 0:
-        self.acceleration = self.brake_deceleration
+        self.acceleration = loc_max_acceleration = self.brake_deceleration
       else:
         self.acceleration += 1 * dt
     elif pressed[self.key_mapping['down']]:
       if self.velocity.x > 0:
-        self.acceleration = -self.brake_deceleration
+        self.acceleration =  -self.brake_deceleration
+        loc_max_acceleration = self.brake_deceleration
       else:
         self.acceleration -= 1 * dt
     elif pressed[self.key_mapping['brake']]:
@@ -119,8 +134,7 @@ class ControllerCar(Car):
       else:
         if dt != 0:
           self.acceleration = -self.velocity.x / dt
-    self.acceleration = max(-self.max_acceleration, min(self.acceleration, self.max_acceleration))
-
+    self.acceleration = max(-loc_max_acceleration, min(self.acceleration, loc_max_acceleration))
 
     if pressed[self.key_mapping['right']]:
       if self.steering > 0:
@@ -153,5 +167,9 @@ class AutonomousCar(Car):
     xy = self.position.y / parking_height
     self.update(dt)
     self.steering = self.fuzzy_steering.get_steering(xa , xy, self.angle)
+
+class NotSteerableCar(Car):
+  def update(self, dt):
+    return
 
 
