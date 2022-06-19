@@ -28,26 +28,29 @@ class Game:
     self.exit = False
 
   def draw_objects(self):
-    self.screen.fill(self.WHITE)
+    # self.screen.fill(self.WHITE) 
     self.all_sprites.draw(self.screen)
     pygame.display.update()
 
   def __add_game_objects(self):
     self.all_sprites = pygame.sprite.Group()
+    self.sensors = pygame.sprite.Group()
     self.cars = []
-    self.walls = pygame.sprite.Group()
     # self.add_car(AutonomousCar(600, 240 + 64))
 
-    self.level = Level({'path': 'map/road.csv'})
-    for o in self.level.level_objects:
-      self.all_sprites.add(o)
-    self.add_car(ControllerCar(Car.HEIGHT/2, screen_height - Car.HEIGHT - 40))
+    # self.level = Level({'path': 'map/road.csv'})
+    # for o in self.level.level_objects:
+      # self.all_sprites.add(o)
+    self.add_car(ControllerCar(Car.HEIGHT/2, screen_height - Car.HEIGHT - 40, self.screen))
     self.add_cars_with_slot()
+    # s = Sensor()
+    # self.sensors.add(s)
+    # self.all_sprites.add(s)
 
   def add_car(self, car):
     self.cars.append(car)
     self.all_sprites.add(car)
-    car.walls = self.all_sprites
+    self.all_sprites.add(car.get_all_sprites())
 
   def update_cars(self, cars, dt):
     for car in cars:
@@ -77,7 +80,9 @@ class Game:
         if event.type == pygame.QUIT:
           self.exit = True      
       self.update_cars(self.cars, dt)
+      # self.sensors.update()
       self.draw_objects()
+      pygame.display.flip()
       self.clock.tick(self.fps)
     pygame.quit()
 

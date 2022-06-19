@@ -1,3 +1,6 @@
+# Trygonometry
+# https://www.youtube.com/watch?v=SEqFQl2ADi0
+
 import pygame
 import os
 from math import pi, sin, cos, tan, radians, degrees, copysign
@@ -5,6 +8,7 @@ import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 import matplotlib.pyplot as plt
+from sensor import Sensor
 
 from fuzzy_steering import FuzzySteering
 
@@ -16,12 +20,22 @@ class Car(pygame.sprite.Sprite):
   # Center of a Car will be positioned to the given coordinates
   def __init__(self, pos_x, pos_y):
     pygame.sprite.Sprite.__init__(self)
-    self.original = pygame.image.load('assets/car.png')
+    self.original = pygame.image.load('assets/car.png').convert_alpha()
     self.image = self.original
     self.rect = self.image.get_rect()
     self.rect.center = [pos_x, pos_y]
     self.walls = None
     self.init_moving(pos_x, pos_y)
+    self.init_sensors()
+    self.mask = pygame.mask.from_surface(self.image)
+
+  def init_sensors(self):
+    self.sensors = pygame.sprite.Group()
+    s = Sensor()
+    self.sensors.add(s)
+
+  def get_all_sprites(self):
+    return []
 
   def init_moving(self, x, y, angle=0.0, length=2, max_steering=45, max_acceleration=3.0):
     self.position = pygame.Vector2(x, y)
@@ -45,6 +59,7 @@ class Car(pygame.sprite.Sprite):
 
     if self.steering:
       turning_radius = self.length / sin(radians(self.steering))
+      # https://www.youtube.com/watch?v=QnXxdIP3U-Q
       angular_velocity = self.velocity.x / turning_radius
     else:
       angular_velocity = 0
@@ -93,8 +108,9 @@ class Car(pygame.sprite.Sprite):
       self.velocity.x = 0
 
 class ControllerCar(Car):
-  def __init__(self, pos_x, pos_y):
+  def __init__(self, pos_x, pos_y, screen):
     Car.__init__(self, pos_x, pos_y)
+    self.screen = screen
     self.max_steering = 25
     self.key_mapping = {
       'up': pygame.K_UP,
@@ -107,6 +123,11 @@ class ControllerCar(Car):
   def update(self, dt):
     self.detect_steering(dt)
     super().update(dt)
+    # sensor_coordiantes = tuple(np.add(self.rect.center,(WIDTH/2,HEIGHT/2)))    
+    self.sensors.update(self, self.rect.center, self.screen)
+
+  def get_all_sprites(self):
+    return self.sensors
 
   def detect_steering(self, dt):
     pressed = pygame.key.get_pressed()
