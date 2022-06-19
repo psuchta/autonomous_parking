@@ -30,9 +30,9 @@ class Car(pygame.sprite.Sprite):
     self.mask = pygame.mask.from_surface(self.image)
 
   def init_sensors(self):
-    self.sensors = pygame.sprite.Group()
+    self.sensors = []
     s = Sensor()
-    self.sensors.add(s)
+    self.sensors.append(s)
 
   def get_all_sprites(self):
     return []
@@ -123,11 +123,9 @@ class ControllerCar(Car):
   def update(self, dt):
     self.detect_steering(dt)
     super().update(dt)
-    # sensor_coordiantes = tuple(np.add(self.rect.center,(WIDTH/2,HEIGHT/2)))    
-    self.sensors.update(self, self.rect.center, self.screen)
-
-  def get_all_sprites(self):
-    return self.sensors
+    # sensor_coordiantes = tuple(np.add(self.rect.center,(WIDTH/2,HEIGHT/2)))
+    for s in self.sensors:
+      s.update(self, self.rect.center, self.screen, self.angle)
 
   def detect_steering(self, dt):
     pressed = pygame.key.get_pressed()
