@@ -129,6 +129,7 @@ class ControllerCar(Car):
       sensor.update(sensor_position, self.angle)
 
   def init_sensors(self):
+    # TODO simplify this method
     self.sensors = []
     # Left Front
     s = Sensor(self.game, self.screen, 90)
