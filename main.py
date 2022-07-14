@@ -36,18 +36,18 @@ class Game:
   def __add_game_objects(self):
     self.world_sprites = pygame.sprite.Group()
     self.cars = pygame.sprite.Group()
-    self.not_steerable_cars = pygame.sprite.Group()
+    self.not_steerable_cars = []
     # self.add_car(AutonomousCar(600, 240 + 64))
 
     self.level = Level({'path': 'map/road.csv'})
     for o in self.level.level_objects:
       self.world_sprites.add(o)
-    self.add_car(ControllerCar(Car.HEIGHT/2, screen_height - Car.HEIGHT - 40, self.screen))
+    self.add_car(ControllerCar(Car.HEIGHT/2, screen_height - Car.HEIGHT - 40, self.screen, self))
     self.add_cars_with_slot()
 
-  def add_car(self, car, steerable=False):
-    if steerable: 
-      self.not_steerable_cars.add(car)
+  def add_car(self, car, not_steerable=False):
+    if not_steerable: 
+      self.not_steerable_cars.append(car)
     self.cars.add(car)
     self.world_sprites.add(car)
 
@@ -63,12 +63,12 @@ class Game:
     empty_space = 0
     for car_number in range(9):
       # Add upper cars
-      self.add_car(NotSteerableCar(Car.HEIGHT/2 + Car.HEIGHT * car_number + empty_space, screen_height - Car.HEIGHT*2 - 20))
+      self.add_car(NotSteerableCar(Car.HEIGHT/2 + Car.HEIGHT * car_number + empty_space, screen_height - Car.HEIGHT*2 - 20, self), True)
       if car_number == 3:
         empty_space += 50
         continue
       # Add cars at the bottom with empty parks slot
-      self.add_car(NotSteerableCar(Car.HEIGHT/2 + Car.HEIGHT * car_number + empty_space, screen_height - Car.HEIGHT / 2))
+      self.add_car(NotSteerableCar(Car.HEIGHT/2 + Car.HEIGHT * car_number + empty_space, screen_height - Car.HEIGHT / 2, self), True)
       empty_space += 20
 
 

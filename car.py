@@ -9,6 +9,8 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 import matplotlib.pyplot as plt
 from sensor import Sensor
+import math
+import numpy as np
 
 from fuzzy_steering import FuzzySteering
 
@@ -18,7 +20,7 @@ class Car(pygame.sprite.Sprite):
   METER_SCALE = 32
 
   # Center of a Car will be positioned to the given coordinates
-  def __init__(self, pos_x, pos_y):
+  def __init__(self, pos_x, pos_y, game):
     pygame.sprite.Sprite.__init__(self)
     self.original = pygame.image.load('assets/car.png').convert_alpha()
     self.image = self.original
@@ -26,13 +28,8 @@ class Car(pygame.sprite.Sprite):
     self.rect.center = [pos_x, pos_y]
     self.walls = None
     self.init_moving(pos_x, pos_y)
-    self.init_sensors()
+    self.game = game
     self.mask = pygame.mask.from_surface(self.image)
-
-  def init_sensors(self):
-    self.sensors = []
-    s = Sensor()
-    self.sensors.append(s)
 
   def get_all_sprites(self):
     return []
@@ -108,8 +105,8 @@ class Car(pygame.sprite.Sprite):
       self.velocity.x = 0
 
 class ControllerCar(Car):
-  def __init__(self, pos_x, pos_y, screen):
-    Car.__init__(self, pos_x, pos_y)
+  def __init__(self, pos_x, pos_y, screen, game):
+    Car.__init__(self, pos_x, pos_y, game)
     self.screen = screen
     self.max_steering = 25
     self.key_mapping = {
@@ -119,13 +116,65 @@ class ControllerCar(Car):
       'right': pygame.K_RIGHT,
       'left': pygame.K_LEFT
     }
+    self.init_sensors()
 
   def update(self, dt):
     self.detect_steering(dt)
     super().update(dt)
     # sensor_coordiantes = tuple(np.add(self.rect.center,(WIDTH/2,HEIGHT/2)))
     for s in self.sensors:
-      s.update(self, self.rect.center, self.screen, self.angle)
+      shift_angle = s['shift_position']
+      sensor_position = self.compute_sensor_position(self.rect.center, shift_angle['angle'], shift_angle['length'])
+      sensor = s['sensor']
+      sensor.update(sensor_position, self.angle)
+
+  def init_sensors(self):
+    self.sensors = []
+    # Left Front
+    s = Sensor(self.game, self.screen, 90)
+    shift_position = {'angle': 50, 'length': 39}
+    self.sensors.append({'sensor': s, 'shift_position': shift_position})
+    # Left rear
+    s = Sensor(self.game, self.screen, 90)
+    shift_position = {'angle': 140, 'length': 45}
+    self.sensors.append({'sensor': s, 'shift_position': shift_position})
+
+    # Rear right
+    s = Sensor(self.game, self.screen, 135)
+    shift_position = {'angle': 160, 'length': 66}
+    self.sensors.append({'sensor': s, 'shift_position': shift_position})
+    # Rear middle
+    s = Sensor(self.game, self.screen, 180)
+    shift_position = {'angle': 180, 'length': 66}
+    self.sensors.append({'sensor': s, 'shift_position': shift_position})
+    # Rear right
+    s = Sensor(self.game, self.screen, 225)
+    shift_position = {'angle': 200, 'length': 66}
+    self.sensors.append({'sensor': s, 'shift_position': shift_position})
+
+    # Right Front
+    s = Sensor(self.game, self.screen, 270)
+    shift_position = {'angle': -50, 'length': 39}
+    self.sensors.append({'sensor': s, 'shift_position': shift_position})
+    # Right rear
+    s = Sensor(self.game, self.screen, 270)
+    shift_position = {'angle': -140, 'length': 45}
+    self.sensors.append({'sensor': s, 'shift_position': shift_position})
+
+
+    # Rear right
+    s = Sensor(self.game, self.screen, 45)
+    shift_position = {'angle': 20, 'length': 63}
+    self.sensors.append({'sensor': s, 'shift_position': shift_position})
+    # Rear middle
+    s = Sensor(self.game, self.screen, 0)
+    shift_position = {'angle': 0, 'length': 66}
+    self.sensors.append({'sensor': s, 'shift_position': shift_position})
+    # Rear right
+    s = Sensor(self.game, self.screen, -45)
+    shift_position = {'angle': -20, 'length': 63}
+    self.sensors.append({'sensor': s, 'shift_position': shift_position})
+
 
   def detect_steering(self, dt):
     pressed = pygame.key.get_pressed()
@@ -171,9 +220,17 @@ class ControllerCar(Car):
       self.steering = 0
     self.steering = max(-self.max_steering, min(self.steering, self.max_steering))
 
+  def compute_sensor_position(self, car_coordinates, sensor_angle, sensor_init_length):
+    sensor_angle += self.angle
+    sensor_coordiantes = tuple(np.add(car_coordinates,(0,20.0)))
+    x = car_coordinates[0] + math.cos(math.radians(-sensor_angle)) * sensor_init_length
+    y = car_coordinates[1] + math.sin(math.radians(-sensor_angle)) * sensor_init_length
+    return x,y
+
+
 class AutonomousCar(Car):
-  def __init__(self, pos_x, pos_y):
-    Car.__init__(self, pos_x, pos_y)
+  def __init__(self, pos_x, pos_y, game):
+    Car.__init__(self, pos_x, pos_y, game)
     self.velocity = pygame.Vector2(-5.0, 0.0)
     self.fuzzy_steering = FuzzySteering()
 
