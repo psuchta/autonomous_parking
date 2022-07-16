@@ -11,13 +11,13 @@ import matplotlib.pyplot as plt
 from sensor import Sensor
 import math
 import numpy as np
+from settings import meter_scale
 
 from fuzzy_steering import FuzzySteering
 
 class Car(pygame.sprite.Sprite):
   HEIGHT = 128
   WIDTH = 64
-  METER_SCALE = 32
 
   # Center of a Car will be positioned to the given coordinates
   def __init__(self, pos_x, pos_y, game):
@@ -62,7 +62,7 @@ class Car(pygame.sprite.Sprite):
       angular_velocity = 0
 
     # All the move constants are in meter units. We have to scale meters to pixels
-    self.position += self.velocity.rotate(-self.angle) * dt * self.METER_SCALE
+    self.position += self.velocity.rotate(-self.angle) * dt * meter_scale
     self.angle += degrees(angular_velocity) * dt
     self.rect.center = self.position
 
@@ -108,7 +108,7 @@ class ControllerCar(Car):
   def __init__(self, pos_x, pos_y, screen, game):
     Car.__init__(self, pos_x, pos_y, game)
     self.screen = screen
-    self.max_steering = 25
+    self.max_steering = 30
     self.key_mapping = {
       'up': pygame.K_UP,
       'down': pygame.K_DOWN,
