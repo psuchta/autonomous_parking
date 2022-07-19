@@ -237,6 +237,17 @@ class ControllerCar(Car):
     self.sensors.append({'sensor': s, 'shift_position': shift_position})
 
 
+class AutonomousControllerCar(ControllerCar):
+  def __init__(self, pos_x, pos_y, screen, game):
+    ControllerCar.__init__(self, pos_x, pos_y, screen, game)
+
+  def get_steering_dict(self):
+    # sensor_input = map(lambda sensor: sensor.actual_length_in_meter(), self.sensors)
+    sensor_input = []
+    for s in self.sensors:
+      sensor_input.append(s['sensor'].actual_length_in_meter())
+    return super().get_steering_dict()
+
 class AutonomousCar(Car):
   def __init__(self, pos_x, pos_y, game):
     Car.__init__(self, pos_x, pos_y, game)
