@@ -1,13 +1,12 @@
 
 import pygame
 import os
-from car import Car
 from car import *
-from wall import Wall
-from wall import ParkingSlot
+from world.wall import Wall
+from world.wall import ParkingSlot
 from math import copysign
-from settings import *
-from level import Level
+from world.settings import *
+from world.level import Level
 
 
 import numpy as np
@@ -39,7 +38,7 @@ class Game:
     self.not_steerable_cars = []
     # self.add_car(AutonomousCar(600, 240 + 64))
 
-    self.level = Level({'path': 'map/road.csv'})
+    self.level = Level({'path': 'world/road.csv'})
     for o in self.level.level_objects:
       self.world_sprites.add(o)
     self.add_car(ControllerCar(Car.HEIGHT/2, screen_height - Car.HEIGHT - 40, self.screen, self))

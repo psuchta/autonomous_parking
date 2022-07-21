@@ -1,5 +1,5 @@
 from csv import reader
-from settings import tile_size
+from world.settings import tile_size
 import pygame
 
 def import_csv_map(path):

@@ -1,7 +1,7 @@
 import pygame
-from settings import tile_size
-from utils import import_csv_map, import_cut_graphics
-from tile import Tile, StaticTile
+from world.settings import tile_size
+from world.utils import import_csv_map, import_cut_graphics
+from world.tile import Tile, StaticTile
 class Level:
   def __init__(self, level_data):
     self.raw_map = import_csv_map(level_data['path'])
