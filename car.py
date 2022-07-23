@@ -11,8 +11,7 @@ import matplotlib.pyplot as plt
 from sensor import Sensor
 import math
 import numpy as np
-from settings import meter_scale
-
+from world.settings import meter_scale
 from fuzzy_steering import FuzzySteering
 
 class Car(pygame.sprite.Sprite):
@@ -242,10 +241,8 @@ class AutonomousControllerCar(ControllerCar):
     ControllerCar.__init__(self, pos_x, pos_y, screen, game)
 
   def get_steering_dict(self):
-    # sensor_input = map(lambda sensor: sensor.actual_length_in_meter(), self.sensors)
-    sensor_input = []
-    for s in self.sensors:
-      sensor_input.append(s['sensor'].actual_length_in_meter())
+    sensor_input = map(lambda s: s['sensor'].actual_length_in_meter(), self.sensors)
+
     return super().get_steering_dict()
 
 class AutonomousCar(Car):
