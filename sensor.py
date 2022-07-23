@@ -1,7 +1,7 @@
 import pygame
 import math
 import numpy as np
-from settings import meter_scale
+from world.settings import meter_scale
 # https://stackoverflow.com/questions/34456195/make-a-line-as-a-sprite-with-its-own-collision-in-pygame/65324946#65324946
 class Sensor:
   def __init__(self, game, screen, initial_angle):
