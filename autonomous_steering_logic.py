@@ -1,10 +1,12 @@
 import math
-import numpy as np
 from functools import reduce
 import struct
 import numpy as np
 
 class AutonomousSteeringLogic:
+
+  def __init__(self):
+    self.binary_converter = BinaryConverter()
 
   def linear_polynomial(self, coefficients, sensors_input):
     if len(coefficients) != (len(sensors_input) + 1):
@@ -24,10 +26,3 @@ class AutonomousSteeringLogic:
 
   def sigmoid(self, x):
     return 1 / (1 + math.e ** -x)
-
-  def float_to_bin(self, num):
-    return bin(np.float16(num).view('H'))[2:].zfill(16)
-
-  def bin_to_float(self, binary):
-    y = struct.pack("H",int(binary,2))
-    return np.frombuffer(y, dtype =np.float16)[0]
