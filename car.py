@@ -107,6 +107,8 @@ class Car(pygame.sprite.Sprite):
       self.velocity.x = 0
 
 class ControllerCar(Car):
+  CAR_SENSORS_NUM = 10
+
   def __init__(self, pos_x, pos_y, screen, game):
     Car.__init__(self, pos_x, pos_y, game)
     self.screen = screen
