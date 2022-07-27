@@ -2,6 +2,7 @@ import math
 from functools import reduce
 import struct
 import numpy as np
+from binary_converter import BinaryConverter
 
 class AutonomousSteeringLogic:
 
