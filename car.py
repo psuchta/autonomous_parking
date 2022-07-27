@@ -11,13 +11,12 @@ import matplotlib.pyplot as plt
 from sensor import Sensor
 import math
 import numpy as np
-
+from world.settings import meter_scale
 from fuzzy_steering import FuzzySteering
 
 class Car(pygame.sprite.Sprite):
   HEIGHT = 128
   WIDTH = 64
-  METER_SCALE = 32
 
   # Center of a Car will be positioned to the given coordinates
   def __init__(self, pos_x, pos_y, game):
@@ -51,6 +50,9 @@ class Car(pygame.sprite.Sprite):
     self.brake_deceleration = 15
 
   def update(self, dt = 0):
+    self.move_itself(dt)
+
+  def move_itself(self, dt = 0):
     self.velocity += (self.acceleration * dt, 0)
     self.velocity.x = max(-self.max_velocity, min(self.velocity.x, self.max_velocity))
 
@@ -62,7 +64,7 @@ class Car(pygame.sprite.Sprite):
       angular_velocity = 0
 
     # All the move constants are in meter units. We have to scale meters to pixels
-    self.position += self.velocity.rotate(-self.angle) * dt * self.METER_SCALE
+    self.position += self.velocity.rotate(-self.angle) * dt * meter_scale
     self.angle += degrees(angular_velocity) * dt
     self.rect.center = self.position
 
@@ -105,10 +107,12 @@ class Car(pygame.sprite.Sprite):
       self.velocity.x = 0
 
 class ControllerCar(Car):
+  CAR_SENSORS_NUM = 10
+
   def __init__(self, pos_x, pos_y, screen, game):
     Car.__init__(self, pos_x, pos_y, game)
     self.screen = screen
-    self.max_steering = 25
+    self.max_steering = 30
     self.key_mapping = {
       'up': pygame.K_UP,
       'down': pygame.K_DOWN,
@@ -118,15 +122,72 @@ class ControllerCar(Car):
     }
     self.init_sensors()
 
+  def get_steering_dict(self):
+    pressed = pygame.key.get_pressed()
+    steering_dict = {}
+    # Create dictionary with boolean values. 
+    # When key from key_mapping is pressed, its value is set to True
+    for key in self.key_mapping.keys():
+      steering_dict[key] = pressed[self.key_mapping[key]]
+    return steering_dict
+
   def update(self, dt):
-    self.detect_steering(dt)
+    steering_dict = self.get_steering_dict()
+    self.update_steer(dt, steering_dict)
     super().update(dt)
-    # sensor_coordiantes = tuple(np.add(self.rect.center,(WIDTH/2,HEIGHT/2)))
     for s in self.sensors:
       shift_angle = s['shift_position']
       sensor_position = self.compute_sensor_position(self.rect.center, shift_angle['angle'], shift_angle['length'])
       sensor = s['sensor']
       sensor.update(sensor_position, self.angle)
+
+  def update_steer(self, dt, steering_dict):
+    loc_max_acceleration = self.max_acceleration
+
+    if steering_dict['up']:
+      if self.velocity.x < 0:
+        self.acceleration = loc_max_acceleration = self.brake_deceleration
+      else:
+        self.acceleration += 1 * dt
+    elif steering_dict['down']:
+      if self.velocity.x > 0:
+        self.acceleration =  -self.brake_deceleration
+        loc_max_acceleration = self.brake_deceleration
+      else:
+        self.acceleration -= 1 * dt
+    elif steering_dict['brake']:
+      if abs(self.velocity.x) > dt * self.brake_deceleration:
+        self.acceleration = -copysign(self.brake_deceleration, self.velocity.x)
+      else:
+        self.acceleration = -self.velocity.x / dt
+    else:
+      if abs(self.velocity.x) > dt * self.free_deceleration:
+        self.acceleration = -copysign(self.free_deceleration, self.velocity.x)
+      else:
+        if dt != 0:
+          self.acceleration = -self.velocity.x / dt
+    self.acceleration = max(-loc_max_acceleration, min(self.acceleration, loc_max_acceleration))
+
+    if steering_dict['right']:
+      if self.steering > 0:
+        self.steering = 0
+      else:
+        self.steering -= 30 * dt
+    elif steering_dict['left']:
+      if self.steering < 0:
+        self.steering = 0
+      else:
+        self.steering += 30 * dt
+    else:
+      self.steering = 0
+    self.steering = max(-self.max_steering, min(self.steering, self.max_steering))
+
+  def compute_sensor_position(self, car_coordinates, sensor_angle, sensor_init_length):
+    sensor_angle += self.angle
+    sensor_coordiantes = tuple(np.add(car_coordinates,(0,20.0)))
+    x = car_coordinates[0] + math.cos(math.radians(-sensor_angle)) * sensor_init_length
+    y = car_coordinates[1] + math.sin(math.radians(-sensor_angle)) * sensor_init_length
+    return x,y
 
   def init_sensors(self):
     # TODO simplify this method
@@ -177,57 +238,14 @@ class ControllerCar(Car):
     self.sensors.append({'sensor': s, 'shift_position': shift_position})
 
 
-  def detect_steering(self, dt):
-    pressed = pygame.key.get_pressed()
-    loc_max_acceleration = self.max_acceleration
+class AutonomousControllerCar(ControllerCar):
+  def __init__(self, pos_x, pos_y, screen, game):
+    ControllerCar.__init__(self, pos_x, pos_y, screen, game)
 
-    if pressed[self.key_mapping['up']]:
-      if self.velocity.x < 0:
-        self.acceleration = loc_max_acceleration = self.brake_deceleration
-      else:
-        self.acceleration += 1 * dt
-    elif pressed[self.key_mapping['down']]:
-      if self.velocity.x > 0:
-        self.acceleration =  -self.brake_deceleration
-        loc_max_acceleration = self.brake_deceleration
-      else:
-        self.acceleration -= 1 * dt
-    elif pressed[self.key_mapping['brake']]:
-      if abs(self.velocity.x) > dt * self.brake_deceleration:
-        self.acceleration = -copysign(self.brake_deceleration, self.velocity.x)
-      else:
-        self.acceleration = -self.velocity.x / dt
-    else:
-      if abs(self.velocity.x) > dt * self.free_deceleration:
-        self.acceleration = -copysign(self.free_deceleration, self.velocity.x)
-      else:
-        if dt != 0:
-          self.acceleration = -self.velocity.x / dt
-    self.acceleration = max(-loc_max_acceleration, min(self.acceleration, loc_max_acceleration))
+  def get_steering_dict(self):
+    sensor_input = map(lambda s: s['sensor'].actual_length_in_meter(), self.sensors)
 
-    if pressed[self.key_mapping['right']]:
-      if self.steering > 0:
-        steering_add = 90
-      else:
-        steering_add = 30
-      self.steering -= steering_add * dt
-    elif pressed[self.key_mapping['left']]:
-      if self.steering < 0:
-        steering_add = 90
-      else:
-        steering_add = 30
-      self.steering += steering_add * dt
-    else:
-      self.steering = 0
-    self.steering = max(-self.max_steering, min(self.steering, self.max_steering))
-
-  def compute_sensor_position(self, car_coordinates, sensor_angle, sensor_init_length):
-    sensor_angle += self.angle
-    sensor_coordiantes = tuple(np.add(car_coordinates,(0,20.0)))
-    x = car_coordinates[0] + math.cos(math.radians(-sensor_angle)) * sensor_init_length
-    y = car_coordinates[1] + math.sin(math.radians(-sensor_angle)) * sensor_init_length
-    return x,y
-
+    return super().get_steering_dict()
 
 class AutonomousCar(Car):
   def __init__(self, pos_x, pos_y, game):

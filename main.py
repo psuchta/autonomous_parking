@@ -41,7 +41,7 @@ class Game:
     self.level = Level({'path': 'world/road.csv'})
     for o in self.level.level_objects:
       self.world_sprites.add(o)
-    self.add_car(ControllerCar(Car.HEIGHT/2, screen_height - Car.HEIGHT - 40, self.screen, self))
+    self.add_car(AutonomousControllerCar(Car.HEIGHT/2, screen_height - Car.HEIGHT - 40, self.screen, self))
     self.add_cars_with_slot()
 
   def add_car(self, car, not_steerable=False):
