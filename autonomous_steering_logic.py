@@ -27,3 +27,6 @@ class AutonomousSteeringLogic:
 
   def sigmoid(self, x):
     return 1 / (1 + math.e ** -x)
+
+  def create_genome(self, length):
+    return np.random.randint(2, size=length)

@@ -38,5 +38,9 @@ class TestAutonomousSteeringLogic(unittest.TestCase):
     result = self.logic.convert_to_movment_signal(0.099999)
     self.assertEqual(-1,result)
 
+  def test_create_genome(self):
+    result = self.logic.create_genome(10)
+    self.assertEqual(10, len(result))
+
 if __name__ == '__main__':
   unittest.main()
