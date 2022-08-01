@@ -78,6 +78,8 @@ class Game:
         if event.type == pygame.QUIT:
           self.exit = True      
       self.draw_objects(dt)
+      # color = (255,0,0)
+      # pygame.draw.rect(self.screen, color, pygame.Rect(30, 30, 60, 60),  2)
       pygame.display.flip()
       self.clock.tick(self.fps)
     pygame.quit()

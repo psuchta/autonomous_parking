@@ -29,6 +29,7 @@ class Car(pygame.sprite.Sprite):
     self.init_moving(pos_x, pos_y)
     self.game = game
     self.mask = pygame.mask.from_surface(self.image)
+    self.hit_something = False
 
   def get_all_sprites(self):
     return []
@@ -132,6 +133,9 @@ class ControllerCar(Car):
     return steering_dict
 
   def update(self, dt):
+    if self.hit_something:
+      return
+
     steering_dict = self.get_steering_dict()
     self.update_steer(dt, steering_dict)
     super().update(dt)
@@ -140,6 +144,7 @@ class ControllerCar(Car):
       sensor_position = self.compute_sensor_position(self.rect.center, shift_angle['angle'], shift_angle['length'])
       sensor = s['sensor']
       sensor.update(sensor_position, self.angle)
+    self.check_if_hit_something()
 
   def update_steer(self, dt, steering_dict):
     loc_max_acceleration = self.max_acceleration
@@ -236,6 +241,9 @@ class ControllerCar(Car):
     s = Sensor(self.game, self.screen, -45)
     shift_position = {'angle': -20, 'length': 63}
     self.sensors.append({'sensor': s, 'shift_position': shift_position})
+
+  def check_if_hit_something(self):
+    self.hit_something = any(s['sensor'].hit_something() for s in self.sensors)
 
 
 class AutonomousControllerCar(ControllerCar):

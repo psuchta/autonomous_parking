@@ -12,6 +12,9 @@ class Sensor:
     self.game = game
     self.screen = screen
 
+  def hit_something(self):
+    return self.actual_length <= 1
+
   def get_not_steerable(self):
     return self.game.not_steerable_cars
 
