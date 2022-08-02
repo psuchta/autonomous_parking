@@ -1,12 +1,14 @@
 
 import pygame
 import os
-from car import *
-from world.wall import Wall
-from world.wall import ParkingSlot
+from cars.autonomous_controlled_car import AutonomousControlledCar
+from cars.not_steerable_car import NotSteerableCar
+from parking_slot import ParkingSlot
 from math import copysign
 from world.settings import *
 from world.level import Level
+from cars.car import Car
+from cars.controlled_car import ControlledCar
 
 
 import numpy as np
@@ -15,8 +17,6 @@ from skfuzzy import control as ctrl
 import matplotlib.pyplot as plt
 
 class Game:
-  WHITE = (255, 255, 255)
-  BLACK = (0, 0, 0)
   def __init__(self):
     pygame.init()
     pygame.display.set_caption('Car parking with fuzzy sets')
@@ -33,6 +33,7 @@ class Game:
     pygame.display.update()
 
   def __add_game_objects(self):
+    self.parking_slot = ParkingSlot((440, 480), 170, 80)
     self.world_sprites = pygame.sprite.Group()
     self.cars = pygame.sprite.Group()
     self.not_steerable_cars = []
@@ -41,7 +42,8 @@ class Game:
     self.level = Level({'path': 'world/road.csv'})
     for o in self.level.level_objects:
       self.world_sprites.add(o)
-    self.add_car(AutonomousControllerCar(Car.HEIGHT/2, screen_height - Car.HEIGHT - 40, self.screen, self))
+    self.world_sprites.add(self.parking_slot)
+    self.add_car(AutonomousControlledCar(AutonomousControlledCar.HEIGHT/2, screen_height - AutonomousControlledCar.HEIGHT - 40, self.screen, self))
     self.add_cars_with_slot()
 
   def add_car(self, car, not_steerable=False):
@@ -52,22 +54,19 @@ class Game:
 
   def update_cars(self, cars, dt):
     for car in cars:
-      if isinstance(car, AutonomousCar): 
-        car.autonomouse_steering(dt)
-      else:
-        car.update(dt)
+      car.update(dt)
 
   def add_cars_with_slot(self):
     # Empty space between cars
     empty_space = 0
     for car_number in range(9):
       # Add upper cars
-      self.add_car(NotSteerableCar(Car.HEIGHT/2 + Car.HEIGHT * car_number + empty_space, screen_height - Car.HEIGHT*2 - 20, self), True)
+      self.add_car(NotSteerableCar(NotSteerableCar.HEIGHT/2 + NotSteerableCar.HEIGHT * car_number + empty_space, screen_height - NotSteerableCar.HEIGHT*2 - 20, self), True)
       if car_number == 3:
         empty_space += 50
         continue
       # Add cars at the bottom with empty parks slot
-      self.add_car(NotSteerableCar(Car.HEIGHT/2 + Car.HEIGHT * car_number + empty_space, screen_height - Car.HEIGHT / 2, self), True)
+      self.add_car(NotSteerableCar(NotSteerableCar.HEIGHT/2 + NotSteerableCar.HEIGHT * car_number + empty_space, screen_height - NotSteerableCar.HEIGHT / 2, self), True)
       empty_space += 20
 
 
@@ -78,8 +77,6 @@ class Game:
         if event.type == pygame.QUIT:
           self.exit = True      
       self.draw_objects(dt)
-      # color = (255,0,0)
-      # pygame.draw.rect(self.screen, color, pygame.Rect(30, 30, 60, 60),  2)
       pygame.display.flip()
       self.clock.tick(self.fps)
     pygame.quit()
