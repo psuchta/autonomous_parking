@@ -25,6 +25,9 @@ class Car(pygame.sprite.Sprite):
     self.mask = pygame.mask.from_surface(self.image)
     self.alive = True
 
+  def distance_to_point(self, coordinates):
+    return pygame.math.Vector2.distance_to(self.position, pygame.Vector2(coordinates)) / meter_scale
+
   def get_all_sprites(self):
     return []
 
