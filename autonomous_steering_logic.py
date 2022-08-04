@@ -30,13 +30,3 @@ class AutonomousSteeringLogic:
 
   def sigmoid(self, x):
     return 1 / (1 + math.e ** -x)
-
-  def create_generation(self, generation_size, genome_size = GenomeHelper.GENOME_LENGTH):
-    return [self.genome_helper.init_randomly(genome_size) for _ in range(generation_size)]
-
-  def mutate_genome(self, binary_genome, probability=0.1):
-    for idx, val in enumerate(binary_genome):
-      if random.uniform(0, 1) <= probability:
-        # change to opposite binary val
-        binary_genome[idx] = 1 - val
-

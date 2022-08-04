@@ -26,7 +26,6 @@ class BaseProgram:
     self.world_sprites.draw(self.screen)
     self.update_cars(self.cars, dt)
     self.cars.draw(self.screen)
-    pygame.display.update()
 
   def __add_game_objects(self):
     self.parking_slot = ParkingSlot((440, 480), 170, 80)
