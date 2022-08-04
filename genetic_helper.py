@@ -1,5 +1,6 @@
 import random
 from genome_helper import GenomeHelper
+import pygame
 import numpy as np
 
 class GeneticHelper:
@@ -49,3 +50,10 @@ class GeneticHelper:
       if random.uniform(0, 1) <= probability:
         # change to opposite binary val
         binary_genome[idx] = 1 - val
+
+  def fitness(self, car, parking_spot):
+    distance_loss = car.distance_to_point(parking_spot.rect.center)
+    distance_fitness = 1 - (distance_loss/6.5)
+    intersection_fintness = parking_spot.car_intersection_ratio(car.rect)
+    print((distance_fitness + intersection_fintness)/2)
+    return (distance_fitness + intersection_fintness)/2
