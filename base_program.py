@@ -39,7 +39,7 @@ class BaseProgram:
     for o in self.level.level_objects:
       self.world_sprites.add(o)
     self.world_sprites.add(self.parking_slot)
-    self.add_car(AutonomousControlledCar(64, 408, self.screen, self))
+    self.add_car(AutonomousControlledCar(700, 430, self.screen, self))
     self.add_cars_with_slot()
 
   def add_car(self, car, not_steerable=False):
