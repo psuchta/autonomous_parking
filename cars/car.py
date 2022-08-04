@@ -23,7 +23,7 @@ class Car(pygame.sprite.Sprite):
     self.init_moving(pos_x, pos_y)
     self.game = game
     self.mask = pygame.mask.from_surface(self.image)
-    self.hit_something = False
+    self.alive = True
 
   def get_all_sprites(self):
     return []

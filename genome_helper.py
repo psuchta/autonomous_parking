@@ -1,4 +1,4 @@
-from car import ControllerCar
+from cars.controlled_car import ControlledCar
 from binary_converter import BinaryConverter
 import numpy as np
 
@@ -6,7 +6,7 @@ class GenomeHelper:
   GENES_PER_NUMBER = BinaryConverter.BITS_COUNT
   BIAS_UNITS = BinaryConverter.BIAS_UNITS
 
-  NUMBERS_PEER_STEER = ControllerCar.CAR_SENSORS_NUM + BIAS_UNITS
+  NUMBERS_PEER_STEER = ControlledCar.CAR_SENSORS_NUM + BIAS_UNITS
   PEER_STEER_GENES = NUMBERS_PEER_STEER * GENES_PER_NUMBER;
   # Genes for engine and wheels
   GENOME_LENGTH = PEER_STEER_GENES * 2

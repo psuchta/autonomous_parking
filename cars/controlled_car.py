@@ -32,7 +32,7 @@ class ControlledCar(Car):
     return steering_dict
 
   def update(self, dt):
-    if self.hit_something:
+    if not self.alive:
       return
 
     steering_dict = self.get_steering_dict()
@@ -142,4 +142,4 @@ class ControlledCar(Car):
     self.sensors.append({'sensor': s, 'shift_position': shift_position})
 
   def check_if_hit_something(self):
-    self.hit_something = any(s['sensor'].hit_something() for s in self.sensors)
+    self.alive = all(not s['sensor'].hit_something() for s in self.sensors)
