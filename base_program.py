@@ -19,7 +19,7 @@ class BaseProgram:
     self.screen = pygame.display.set_mode((screen_width, screen_height))
     self.clock = pygame.time.Clock()
     self.fps = 60
-    self.__add_game_objects()
+    self.add_game_objects()
     self.exit = False
 
   def draw_objects(self, dt):
@@ -27,7 +27,7 @@ class BaseProgram:
     self.update_cars(self.cars, dt)
     self.cars.draw(self.screen)
 
-  def __add_game_objects(self):
+  def add_game_objects(self):
     self.parking_slot = ParkingSlot((440, 480), 170, 80)
     self.world_sprites = pygame.sprite.Group()
     self.cars = pygame.sprite.Group()
@@ -39,7 +39,6 @@ class BaseProgram:
     for o in self.level.level_objects:
       self.world_sprites.add(o)
     self.world_sprites.add(self.parking_slot)
-    self.add_car(AutonomousControlledCar(700, 430, self.screen, self))
     self.add_cars_with_slot()
 
   def add_car(self, car, not_steerable=False):

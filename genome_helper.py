@@ -34,4 +34,4 @@ class GenomeHelper:
     return engine_signal, wheels_signal
 
   def init_randomly(self, genome_size=GENOME_LENGTH):
-    return np.random.randint(2, size=genome_size)
+    return np.random.randint(2, size=genome_size).tolist()

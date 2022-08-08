@@ -8,28 +8,38 @@ class GeneticHelper:
   def __init__(self):
     self.genome_helper = GenomeHelper()
 
-  def create_generation(self, generation_size, genome_size = GenomeHelper.GENOME_LENGTH):
+  def extract_fitness_from_cars(self, car_population, parking_spot):
+    return [self.fitness(car, parking_spot) for car in car_population]
+
+  def best_fitness_index(self, fitness_results, car_population):
+    max_fitness_index = max(range(len(car_population)), key=lambda idx: fitness_results[idx])
+    return  fitness_results[max_fitness_index], car_population[max_fitness_index].genome
+
+  def create_random_generation(self, generation_size, genome_size = GenomeHelper.GENOME_LENGTH):
     return [self.genome_helper.init_randomly(genome_size) for _ in range(generation_size)]
 
   def crossover(self, parent1, parent2):
     if len(parent1) != len(parent2):
-      raise Exception("Lengths of passed arrays are not the same")
+      raise Exception("Lengths of passed arrays are not the same - Crossover")
     length = len(parent1)
     position = random.randint(2, length-2)
     child1 = parent1[0:position] + parent2[position:length]
     child2 = parent2[0:position] + parent1[position:length]
     return child1, child2
 
-  def tournament_selection(self, population):
-    new_population = []
-    for j in range(2):
-      random.shuffle(population)
-      for i in range(0, population_size-1, 2):
-        if fitness(graph, population[i]) > fitness(graph, population[i+1]):
-          new_population.append(population[i])
-        else:
-          new_population.append(population[i+1])
-    return new_population
+  def tournament_selection(self, fitness_results, car_population, parking_spot, tournament_size):
+    if tournament_size > len(car_population):
+      raise Exception("Tournament size is greater than car population")
+
+    selected = []
+    population_size = len(car_population)
+    
+    for idx in range(population_size):
+      tournament_population_idx = random.sample(list(range(population_size)), tournament_size)
+      max_fit_index = max(tournament_population_idx, key=lambda idx: fitness_results[idx])
+      selected.append(car_population[max_fit_index])
+
+    return selected
 
   def roulette_wheel_selection(self, graph, population):
       new_population = []
@@ -55,5 +65,4 @@ class GeneticHelper:
     distance_loss = car.distance_to_point(parking_spot.rect.center)
     distance_fitness = 1 - (distance_loss/6.5)
     intersection_fintness = parking_spot.car_intersection_ratio(car.rect)
-    print((distance_fitness + intersection_fintness)/2)
     return (distance_fitness + intersection_fintness)/2

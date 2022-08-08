@@ -21,8 +21,8 @@ class TestGeneticHelper(unittest.TestCase):
 
     self.assertEqual([1,1,1,0,0,1,0,1,1,0,1,1], binary_genome)
 
-  def test_create_generation(self):
-    result = self.genetic_helper.create_generation(5, 6)
+  def test_create_random_generation(self):
+    result = self.genetic_helper.create_random_generation(5, 6)
     self.assertEqual(5, len(result))
     self.assertEqual(6, len(result[0]))
 
