@@ -20,8 +20,3 @@ class ParkingSlot(pygame.sprite.Sprite):
     car_surface = car_rectangle.width * car_rectangle.height
     intersection_area = intersection_rect.width * intersection_rect.height
     return intersection_area/car_surface
-
-
-
-
-
