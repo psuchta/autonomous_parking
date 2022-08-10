@@ -3,7 +3,7 @@ from genetic_helper import GeneticHelper
 from cars.autonomous_controlled_car import AutonomousControlledCar
 import pygame
 
-GENERATION_SIZE = 14
+GENERATION_SIZE = 10
 MUTATION_PROBABILITY = 0.04
 
 class GeneticProgram(BaseProgram):

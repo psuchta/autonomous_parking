@@ -15,8 +15,8 @@ class Sensor:
   def hit_something(self):
     return self.actual_length <= 1
 
-  def get_not_steerable(self):
-    return self.game.not_steerable_cars
+  def get_collision_objects(self):
+    return self.game.collision_objects
 
   def actual_length_in_meter(self):
     return self.actual_length / meter_scale
@@ -33,7 +33,7 @@ class Sensor:
         self.actual_length += 1
         x = sensor_position[0] + math.cos(math.radians(-angle)) * self.actual_length
         y = sensor_position[1] + math.sin(math.radians(-angle)) * self.actual_length
-        for c in self.get_not_steerable():
+        for c in self.get_collision_objects():
           pos_in_mask = x - c.rect.x, y - c.rect.y
           touching = c.rect.collidepoint((x,y)) and c.mask.get_at(pos_in_mask)
           if(touching):

@@ -8,7 +8,7 @@ from world.settings import *
 from world.level import Level
 from cars.car import Car
 from cars.controlled_car import ControlledCar
-
+from world.wall import Wall
 
 import numpy as np
 
@@ -28,22 +28,34 @@ class BaseProgram:
     self.cars.draw(self.screen)
 
   def add_game_objects(self):
-    self.parking_slot = ParkingSlot((440, 480), 170, 80)
+    self.parking_slot = ParkingSlot((440, 475), 170, 80)
     self.world_sprites = pygame.sprite.Group()
     self.cars = pygame.sprite.Group()
-    self.not_steerable_cars = []
+    self.collision_objects = []
     self.steerable_cars = []
     # self.add_car(AutonomousCar(600, 240 + 64))
 
     self.level = Level({'path': 'world/road.csv'})
     for o in self.level.level_objects:
       self.world_sprites.add(o)
+
     self.world_sprites.add(self.parking_slot)
+    walls = [
+      [0, 560, screen_width, 20],
+      [screen_width, 0, 20, screen_height],
+      [-20, 0, 20, screen_height],
+    ]
+
+    for wall in walls:
+      wall = Wall(wall[0], wall[1], wall[2], wall[3])
+      self.collision_objects.append(wall)
+      self.world_sprites.add(wall)
+
     self.add_cars_with_slot()
 
   def add_car(self, car, not_steerable=False):
     if not_steerable: 
-      self.not_steerable_cars.append(car)
+      self.collision_objects.append(car)
     else:
       self.steerable_cars.append(car)
     self.cars.add(car)
