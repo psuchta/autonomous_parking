@@ -15,8 +15,15 @@ class GeneticHelper:
     max_fitness_index = max(range(len(car_population)), key=lambda idx: fitness_results[idx])
     return  fitness_results[max_fitness_index], car_population[max_fitness_index].genome
 
-  def create_random_generation(self, generation_size, genome_size = GenomeHelper.GENOME_LENGTH):
-    return [self.genome_helper.init_randomly(genome_size) for _ in range(generation_size)]
+  def create_random_generation(self, population_size, numbers_per_genome = GenomeHelper.NUMBERS_PEER_GENOME):
+    return [self.genome_helper.init_randomly(numbers_per_genome) for _ in range(population_size)]
+
+  def crossover_ieee_754(self, parent1, parent2):
+    child1, child2 = self.crossover(parent1, parent2)
+    # Check if children dont't contain any Nan or Infinity
+    while self.genome_helper.check_if_any_number_forbidden(child1) or self.genome_helper.check_if_any_number_forbidden(child2) :
+      child1, child2 = self.crossover(parent1, parent2)
+    return child1, child2
 
   def crossover(self, parent1, parent2):
     if len(parent1) != len(parent2):
@@ -54,6 +61,21 @@ class GeneticHelper:
         new_population.append(population[np.random.choice(len(population), p=selection_probs)])
 
       return new_population
+
+  def mutate_ieee_754_genome(self, binary_genome, probability=0.1):
+    new_genome = []
+    # Iterate over all numbers in the genome
+    # in the genome each number has length of 16 bits
+    for idx in range(0, len(binary_genome), GenomeHelper.GENES_PER_NUMBER):
+      binary_number = binary_genome[idx:idx+GenomeHelper.GENES_PER_NUMBER]
+
+      self.mutate_genome(binary_number, probability)
+      # Repeat mutation process on original number until binary isn't Nan or Inifinity
+      while self.genome_helper.check_if_number_forbidden(binary_number):
+        binary_number = binary_genome[idx:idx+GenomeHelper.GENES_PER_NUMBER]
+        self.mutate_genome(binary_number, probability)
+      new_genome.extend(binary_number)
+    binary_genome[:] = new_genome
 
   def mutate_genome(self, binary_genome, probability=0.1):
     for idx, val in enumerate(binary_genome):

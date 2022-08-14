@@ -3,7 +3,7 @@ from genetic_helper import GeneticHelper
 from cars.autonomous_controlled_car import AutonomousControlledCar
 import pygame
 
-GENERATION_SIZE = 10
+GENERATION_SIZE = 16
 MUTATION_PROBABILITY = 0.04
 
 class GeneticProgram(BaseProgram):
@@ -66,12 +66,13 @@ class GeneticProgram(BaseProgram):
       new_population = []
       for i in range(0, len(selected_population)-1, 2):
         child1, child2 = self.genetic_helper.crossover(selected_population[i].genome, selected_population[i+1].genome)
-        self.genetic_helper.mutate_genome(child1, MUTATION_PROBABILITY)
-        self.genetic_helper.mutate_genome(child2, MUTATION_PROBABILITY)
+        self.genetic_helper.mutate_ieee_754_genome(child1, MUTATION_PROBABILITY)
+        self.genetic_helper.mutate_ieee_754_genome(child2, MUTATION_PROBABILITY)
         new_population.append(child1)
         new_population.append(child2)
         # if len(new_population) < GENERATION_SIZE:
           # new_population.append(child2)
       self.set_cars_genomes(new_population)
       [car.reset(700, 430) for car in self.steerable_cars]
+    print(best_fitness_car)
     pygame.quit()
