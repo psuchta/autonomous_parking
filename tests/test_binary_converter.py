@@ -27,6 +27,12 @@ class TestBinaryConverter(unittest.TestCase):
     result = self.logic.bin_to_float([1,1,0,0,1,1,0,1,0,1,0,0,0,1,0,1])
     self.assertEqual(np.float16(-21.085), result)
 
+    result = self.logic.bin_to_float([1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0])
+    self.assertEqual('-inf', str(result))
+
+    result = self.logic.bin_to_float([1,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0])
+    self.assertEqual('nan', str(result))
+
   def test_string_to_int_array(self):
     result = self.logic.string_to_int_array('00111011001')
     self.assertEqual([0,0,1,1,1,0,1,1,0,0,1], result)

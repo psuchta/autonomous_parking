@@ -12,9 +12,7 @@ class AutonomousSteeringLogic:
     self.binary_converter = BinaryConverter()
     self.genome_helper = GenomeHelper()
 
-  def get_steering_dict(self, genome, sensors_input):
-    engine_signal, wheels_signal = self.genome_helper.engine_wheels_signal(genome)
-
+  def get_steering_dict(self, engine_signal, wheels_signal, sensors_input):
     engine_signal = self.linear_polynomial(engine_signal, sensors_input)
     wheels_signal = self.linear_polynomial(wheels_signal, sensors_input)
 
