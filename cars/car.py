@@ -31,7 +31,7 @@ class Car(pygame.sprite.Sprite):
   def get_all_sprites(self):
     return []
 
-  def init_moving(self, x, y, angle=0.0, length=2, max_steering=45, max_acceleration=3.0):
+  def init_moving(self, x, y, angle=0.0, length=2, max_steering=45, max_acceleration=2.5):
     self.position = pygame.Vector2(x, y)
     self.velocity = pygame.Vector2(0.0, 0.0)
     self.angle = angle
@@ -56,7 +56,7 @@ class Car(pygame.sprite.Sprite):
 
     if self.steering:
       turning_radius = self.length / sin(radians(self.steering))
-      # https://www.youtube.com/watch?v=QnXxdIP3U-Q
+      # https://asawicki.info/Mirror/Car%20Physics%20for%20Games/Car%20Physics%20for%20Games.html
       angular_velocity = self.velocity.x / turning_radius
     else:
       angular_velocity = 0
@@ -77,9 +77,12 @@ class Car(pygame.sprite.Sprite):
 
   def rotate(self):
     c = self.rect.center
+    # https://stackoverflow.com/questions/15098900/how-to-set-the-pivot-point-center-of-rotation-for-pygame-transform-rotate/69312319#69312319
+    offset = pygame.math.Vector2(25, 0)
+    rotated_offset = offset.rotate(-self.angle)
     # Usage of rotozoom giving better rotation quality than rotate method
     self.image = pygame.transform.rotozoom(self.original, self.angle, 1)
-    self.rect = self.image.get_rect(center = c)
+    self.rect = self.image.get_rect(center = c + rotated_offset)
     self.mask = pygame.mask.from_surface(self.image)
 
 
