@@ -12,7 +12,7 @@ class ControlledCar(Car):
   def __init__(self, pos_x, pos_y, screen, game):
     Car.__init__(self, pos_x, pos_y, game)
     self.screen = screen
-    self.max_steering = 30
+    self.max_steering = 35
     self.key_mapping = {
       'up': pygame.K_UP,
       'down': pygame.K_DOWN,
