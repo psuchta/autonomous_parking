@@ -89,6 +89,12 @@ class TestGenome(unittest.TestCase):
     is_forbidden = self.genome_helper.check_if_number_forbidden([1,1,0,0,0,0,0,0,0,0,0,1,1,1,0,1])
     self.assertEqual(False, is_forbidden)
 
+    is_forbidden = self.genome_helper.check_if_number_forbidden([0,1,1,1,1,0,0,0,0,0,0,1,1,1,0,1])
+    self.assertEqual(False, is_forbidden)
+
+    is_forbidden = self.genome_helper.check_if_number_forbidden([0,1,1,1,1,0,0,0,0,0,0,1,1,1,0,1])
+    self.assertEqual(False, is_forbidden)
+
 
 
 if __name__ == '__main__':

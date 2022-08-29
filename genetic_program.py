@@ -3,8 +3,8 @@ from genetic_helper import GeneticHelper
 from cars.autonomous_controlled_car import AutonomousControlledCar
 import pygame
 
-GENERATION_SIZE = 16
-MUTATION_PROBABILITY = 0.04
+GENERATION_SIZE = 14
+MUTATION_PROBABILITY = 0.004
 
 class GeneticProgram(BaseProgram):
   def __init__(self):
@@ -53,7 +53,7 @@ class GeneticProgram(BaseProgram):
     # best_fitness_car[0] - fitness_score
     # best_fitness_car[1] - genome of the best car
     best_fitness_car = (None, None)
-    generation_size = 50
+    generation_size = 80
     for g in range(generation_size):
       if self.exit: break
       self.run_generation(g)
@@ -62,10 +62,10 @@ class GeneticProgram(BaseProgram):
       if best_fitness_car[0] == None or (best_fitness_car[0] < local_best_fitness[0]):
         best_fitness_car = local_best_fitness
 
-      selected_population = self.genetic_helper.tournament_selection(fitness_results, self.steerable_cars, self.parking_slot, 3)
+      selected_population = self.genetic_helper.tournament_selection(fitness_results, self.steerable_cars, self.parking_slot, 12)
       new_population = []
       for i in range(0, len(selected_population)-1, 2):
-        child1, child2 = self.genetic_helper.crossover(selected_population[i].genome, selected_population[i+1].genome)
+        child1, child2 = self.genetic_helper.crossover_ieee_754(selected_population[i].genome, selected_population[i+1].genome)
         self.genetic_helper.mutate_ieee_754_genome(child1, MUTATION_PROBABILITY)
         self.genetic_helper.mutate_ieee_754_genome(child2, MUTATION_PROBABILITY)
         new_population.append(child1)

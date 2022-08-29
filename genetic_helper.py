@@ -48,15 +48,14 @@ class GeneticHelper:
 
     return selected
 
-  def roulette_wheel_selection(self, graph, population):
+  def roulette_wheel_selection(self, fitness_results, population):
       new_population = []
 
-      fitness_array = [fitness(graph, c) for c in population]
-      min_in_fitness = min(fitness_array)
-      fitness_array = [f - min_in_fitness for f in fitness_array]
-      max_fitness = sum(fitness_array)
+      min_in_fitness = min(fitness_results)
+      fitness_results = [f - min_in_fitness for f in fitness_results]
+      max_fitness = sum(fitness_results)
 
-      selection_probs = [f/max_fitness for f in fitness_array]
+      selection_probs = [f/max_fitness for f in fitness_results]
       for i in range(len(population)):
         new_population.append(population[np.random.choice(len(population), p=selection_probs)])
 
@@ -87,4 +86,9 @@ class GeneticHelper:
     distance_loss = car.distance_to_point(parking_spot.rect.center)
     distance_fitness = 1 - (distance_loss/6.5)
     intersection_fintness = parking_spot.car_intersection_ratio(car.rect)
-    return (distance_fitness + intersection_fintness)/2
+    fitness = (distance_fitness + intersection_fintness)/2
+    if not car.alive:
+      fitness -= 0.1
+    else:
+      fitness += 0.2
+    return fitness

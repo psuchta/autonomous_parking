@@ -60,8 +60,7 @@ class GenomeHelper:
     if len(binary_number) != self.GENES_PER_NUMBER: 
       raise Exception("Binary number has wrong length")
 
-    exponent = binary_number[1:self.EXPONENT_COUNT]
-    significand = binary_number[self.GENES_PER_NUMBER-self.SIGNIFICAND_COUNT:]
+    exponent = binary_number[1:self.EXPONENT_COUNT+1]
     if all(num == 1 for num in exponent):
       return True
 
