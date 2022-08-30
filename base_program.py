@@ -28,7 +28,7 @@ class BaseProgram:
     self.cars.draw(self.screen)
 
   def add_game_objects(self):
-    self.parking_slot = ParkingSlot((440, 475), 170, 80)
+    self.parking_slot = ParkingSlot((458, 480), 128, 64)
     self.world_sprites = pygame.sprite.Group()
     self.cars = pygame.sprite.Group()
     self.collision_objects = []

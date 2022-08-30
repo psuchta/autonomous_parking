@@ -84,11 +84,11 @@ class GeneticHelper:
 
   def fitness(self, car, parking_spot):
     distance_loss = car.distance_to_point(parking_spot.rect.center)
-    distance_fitness = 1 - (distance_loss/6.5)
-    intersection_fintness = parking_spot.car_intersection_ratio(car.rect)
-    fitness = (distance_fitness + intersection_fintness)/2
-    if not car.alive:
-      fitness -= 0.1
-    else:
-      fitness += 0.2
+    distance_loss = car.distance_to_parking(parking_spot)
+    fitness = 1/(distance_loss+1)
+    # if not car.alive:
+      # fitness -= 0.2
+    # else:
+      # fitness += 0.1
+    print(fitness)
     return fitness
