@@ -26,16 +26,15 @@ class Sensor:
     # print(car.mask.get_at((10,10)))
     # print(car.rect.x)
     angle = self.initial_angle + angle
-    self.actual_length = 0
-    touching = False
+    self.actual_length = self.max_length
     x, y = None, None
-    while self.actual_length < self.max_length and (touching == False):
-        self.actual_length += 1
-        x = sensor_position[0] + math.cos(math.radians(-angle)) * self.actual_length
-        y = sensor_position[1] + math.sin(math.radians(-angle)) * self.actual_length
-        for c in self.get_collision_objects():
-          pos_in_mask = x - c.rect.x, y - c.rect.y
-          touching = c.rect.collidepoint((x,y)) and c.mask.get_at(pos_in_mask)
-          if(touching):
-            break
+    x = sensor_position[0] + math.cos(math.radians(-angle)) * self.actual_length
+    y = sensor_position[1] + math.sin(math.radians(-angle)) * self.actual_length
+    for c in self.get_collision_objects():
+      collision = c.rect.clipline(sensor_position, (x, y))
+      if(collision):
+        sensor_length = pygame.Vector2(sensor_position).distance_to(pygame.Vector2(collision[0]))
+        self.actual_length = sensor_length
+    x = sensor_position[0] + math.cos(math.radians(-angle)) * self.actual_length
+    y = sensor_position[1] + math.sin(math.radians(-angle)) * self.actual_length
     pygame.draw.line(self.screen, (255, 255, 255), sensor_position, (x, y), 1)
