@@ -3,8 +3,8 @@ from genetic_helper import GeneticHelper
 from cars.autonomous_controlled_car import AutonomousControlledCar
 import pygame
 
-GENERATION_SIZE = 14
-MUTATION_PROBABILITY = 0.004
+GENERATION_SIZE = 100
+MUTATION_PROBABILITY = 0.009
 
 class GeneticProgram(BaseProgram):
   def __init__(self):
@@ -36,7 +36,7 @@ class GeneticProgram(BaseProgram):
   def run_generation(self, gen_num):
     time_passed = 0
     start_time = pygame.time.get_ticks()
-    while not self.exit and any(car.alive for car in self.steerable_cars) and time_passed <=10000:
+    while not self.exit and any(car.alive for car in self.steerable_cars) and time_passed <= 7000:
       dt = self.clock.get_time() / 1000
       for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -62,7 +62,8 @@ class GeneticProgram(BaseProgram):
       if best_fitness_car[0] == None or (best_fitness_car[0] < local_best_fitness[0]):
         best_fitness_car = local_best_fitness
 
-      selected_population = self.genetic_helper.tournament_selection(fitness_results, self.steerable_cars, self.parking_slot, 12)
+      selected_population = self.genetic_helper.tournament_selection(fitness_results, self.steerable_cars, 80)
+      # selected_population = self.genetic_helper.roulette_wheel_selection(fitness_results, self.steerable_cars)
       new_population = []
       for i in range(0, len(selected_population)-1, 2):
         child1, child2 = self.genetic_helper.crossover_ieee_754(selected_population[i].genome, selected_population[i+1].genome)
