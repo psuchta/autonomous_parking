@@ -4,7 +4,7 @@ from cars.autonomous_controlled_car import AutonomousControlledCar
 import pygame
 
 GENERATION_SIZE = 100
-MUTATION_PROBABILITY = 0.009
+MUTATION_PROBABILITY = 0.01
 
 class GeneticProgram(BaseProgram):
   def __init__(self):
@@ -53,7 +53,7 @@ class GeneticProgram(BaseProgram):
     # best_fitness_car[0] - fitness_score
     # best_fitness_car[1] - genome of the best car
     best_fitness_car = (None, None)
-    generation_size = 80
+    generation_size = 200
     for g in range(generation_size):
       if self.exit: break
       self.run_generation(g)
@@ -62,7 +62,7 @@ class GeneticProgram(BaseProgram):
       if best_fitness_car[0] == None or (best_fitness_car[0] < local_best_fitness[0]):
         best_fitness_car = local_best_fitness
 
-      selected_population = self.genetic_helper.tournament_selection(fitness_results, self.steerable_cars, 80)
+      selected_population = self.genetic_helper.tournament_selection(fitness_results, self.steerable_cars, 90)
       # selected_population = self.genetic_helper.roulette_wheel_selection(fitness_results, self.steerable_cars)
       new_population = []
       for i in range(0, len(selected_population)-1, 2):

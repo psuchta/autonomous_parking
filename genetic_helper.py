@@ -87,8 +87,6 @@ class GeneticHelper:
     distance_loss = car.distance_to_parking(parking_spot)
     fitness = 1/(distance_loss+1)
     if not car.alive:
-      fitness -= 0.25
-    # else:
-      # fitness += 0.1
+      fitness -= 0.1
     print(fitness)
     return fitness
