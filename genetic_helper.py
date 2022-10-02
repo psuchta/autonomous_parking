@@ -34,7 +34,7 @@ class GeneticHelper:
     child2 = parent2[0:position] + parent1[position:length]
     return child1, child2
 
-  def tournament_selection(self, fitness_results, car_population, parking_spot, tournament_size):
+  def tournament_selection(self, fitness_results, car_population, tournament_size):
     if tournament_size > len(car_population):
       raise Exception("Tournament size is greater than car population")
 
@@ -84,11 +84,9 @@ class GeneticHelper:
 
   def fitness(self, car, parking_spot):
     distance_loss = car.distance_to_point(parking_spot.rect.center)
-    distance_fitness = 1 - (distance_loss/6.5)
-    intersection_fintness = parking_spot.car_intersection_ratio(car.rect)
-    fitness = (distance_fitness + intersection_fintness)/2
+    distance_loss = car.distance_to_parking(parking_spot)
+    fitness = 1/(distance_loss+1)
     if not car.alive:
       fitness -= 0.1
-    else:
-      fitness += 0.2
+    print(fitness)
     return fitness

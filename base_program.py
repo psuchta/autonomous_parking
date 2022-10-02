@@ -28,7 +28,9 @@ class BaseProgram:
     self.cars.draw(self.screen)
 
   def add_game_objects(self):
-    self.parking_slot = ParkingSlot((440, 475), 170, 80)
+    # self.parking_slot = ParkingSlot((458, 480), 128, 64)
+    # self.parking_slot = ParkingSlot((300, 480), 128, 64)
+    self.parking_slot = ParkingSlot((165, 480), 128, 64)
     self.world_sprites = pygame.sprite.Group()
     self.cars = pygame.sprite.Group()
     self.collision_objects = []
@@ -71,7 +73,7 @@ class BaseProgram:
     for car_number in range(9):
       # Add upper cars
       self.add_car(NotSteerableCar(NotSteerableCar.HEIGHT/2 + NotSteerableCar.HEIGHT * car_number + empty_space, screen_height - NotSteerableCar.HEIGHT*2 - 20, self), True)
-      if car_number == 3:
+      if car_number == 1:
         empty_space += 50
         continue
       # Add cars at the bottom with empty parks slot
