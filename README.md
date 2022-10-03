@@ -6,3 +6,7 @@ The aim of the project is to create three different models for autonomous parkin
 * Fuzzy sets
 * Deep learning
 
+Run the program
+ ```
+python main.py
+```
