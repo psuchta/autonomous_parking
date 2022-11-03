@@ -8,12 +8,6 @@ class GenomeHelper:
   SIGNIFICAND_COUNT = BinaryConverter.SIGNIFICAND_COUNT
   BIAS_UNITS = BinaryConverter.BIAS_UNITS
 
-  NUMBERS_PEER_STEER = ControlledCar.CAR_SENSORS_NUM + BIAS_UNITS
-  NUMBERS_PEER_GENOME = NUMBERS_PEER_STEER * 2
-  PEER_STEER_GENES = NUMBERS_PEER_STEER * GENES_PER_NUMBER;
-  # Genes for engine and wheels
-  GENOME_LENGTH = PEER_STEER_GENES * 2
-
   def __init__(self):
     self.binary_converter = BinaryConverter()
 
@@ -24,20 +18,11 @@ class GenomeHelper:
     if genome_length % self.GENES_PER_NUMBER != 0:
       raise Exception("Length of passed genome is not correct")
 
-    for idx in range(0, self.GENOME_LENGTH, self.GENES_PER_NUMBER):
+    for idx in range(0, genome_length, self.GENES_PER_NUMBER):
       binary_part = self.binary_converter.bin_to_float(binary_genome[idx:idx + self.GENES_PER_NUMBER])
       decimals.append(binary_part)
 
     return decimals
-
-  def engine_wheels_signal_from_binary(self, binary_genome):
-    genome_numbers = self.genome_to_decimals(binary_genome)
-    return self.engine_wheels_signal(genome_numbers)
-
-  def engine_wheels_signal(self, genome_numbers):
-    engine_signal = genome_numbers[0 : self.NUMBERS_PEER_STEER]
-    wheels_signal = genome_numbers[self.NUMBERS_PEER_STEER : self.NUMBERS_PEER_STEER * 2]
-    return engine_signal, wheels_signal
 
   def init_number_randomly(self, exponent_count=EXPONENT_COUNT, significand_count=SIGNIFICAND_COUNT):
     sign = np.random.randint(2, size=1).tolist()
@@ -49,7 +34,7 @@ class GenomeHelper:
     significand = np.random.randint(2, size=significand_count).tolist()
     return sign + exponent + significand
 
-  def init_randomly(self, numbers_per_genome=NUMBERS_PEER_GENOME):
+  def init_randomly(self, numbers_per_genome):
     binary_genome = []
     for _ in range(numbers_per_genome):
       binary_genome.extend(self.init_number_randomly())
@@ -73,6 +58,3 @@ class GenomeHelper:
         return True
 
     return False
-
-
-

@@ -15,7 +15,7 @@ class GeneticHelper:
     max_fitness_index = max(range(len(car_population)), key=lambda idx: fitness_results[idx])
     return  fitness_results[max_fitness_index], car_population[max_fitness_index].genome
 
-  def create_random_generation(self, population_size, numbers_per_genome = GenomeHelper.NUMBERS_PEER_GENOME):
+  def create_random_generation(self, population_size, numbers_per_genome):
     return [self.genome_helper.init_randomly(numbers_per_genome) for _ in range(population_size)]
 
   def crossover_ieee_754(self, parent1, parent2):
