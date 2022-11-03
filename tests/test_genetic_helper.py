@@ -38,6 +38,11 @@ class TestGeneticHelper(unittest.TestCase):
     self.assertEqual(5, len(result))
     self.assertEqual(2 * GenomeHelper.GENES_PER_NUMBER , len(result[0]))
 
+  def test_tournament_selection(self):
+    # fitness_results, car_population, tournament_size
+    result = self.genetic_helper.tournament_selection([1,7,3,4,5], [1, 2, 3, 4, 5], 5)
+    self.assertEqual([2, 2, 2, 2, 2], result)
+
 
 if __name__ == '__main__':
   unittest.main()
