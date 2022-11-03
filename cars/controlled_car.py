@@ -65,6 +65,9 @@ class ControlledCar(Car):
       else:
         self.acceleration = -self.velocity.x / dt
     else:
+      # For instant brake
+      # self.acceleration = 0
+      # self.velocity.x = 0
       if abs(self.velocity.x) > dt * self.free_deceleration:
         self.acceleration = -copysign(self.free_deceleration, self.velocity.x)
       else:

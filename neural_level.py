@@ -39,7 +39,6 @@ class NeuralLevel:
 
 
   def sigmoid(self, x):
-    # return 1 / (1 + math.e ** -x)
     return 1.0 / (1.0 + np.exp(-x))
 
   def convert_to_movment_signal(self, sigmoid_value, margin = 0.4):
