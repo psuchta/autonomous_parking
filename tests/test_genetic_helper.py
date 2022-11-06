@@ -28,13 +28,18 @@ class TestGeneticHelper(unittest.TestCase):
     self.assertEqual([1,1,1,0,0,1,0,1,1,0,1,1], binary_genome)
 
   def test_mutate_ieee_754_genome_with_high_probability(self):
-    binary_genome = [1,0,1,1,0,1,0,0,0,0,0,0,0,0,1,1, 1,1,1,1,1,1,1,0,0,1,0,0,0,0,1,1]
+    binary_genome = [1,0,1,1,0,1,0,0,0,0,0,0,0,0,1,1, 1,1,0,1,1,1,1,0,0,1,0,0,0,0,1,1]
     self.genetic_helper.mutate_ieee_754_genome(binary_genome, probability=1.0)
 
-    self.assertEqual([0,1,0,0,1,0,1,1,1,1,1,1,1,1,0,0,  0,0,0,0,0,0,0,1,1,0,1,1,1,1,0,0], binary_genome)
+    self.assertEqual([0,1,0,0,1,0,1,1,1,1,1,1,1,1,0,0,  0,0,1,0,0,0,0,1,1,0,1,1,1,1,0,0], binary_genome)
+
+  def test_mutate_ieee_754_genome_with_low_probability(self):
+    binary_genome = [1,0,1,1,0,1,0,0,0,0,0,0,0,0,1,1, 1,1,0,1,1,1,1,0,0,1,0,0,0,0,1,1]
+    self.genetic_helper.mutate_ieee_754_genome(binary_genome, probability=0.00001)
+    self.assertEqual([1,0,1,1,0,1,0,0,0,0,0,0,0,0,1,1, 1,1,0,1,1,1,1,0,0,1,0,0,0,0,1,1], binary_genome)
 
   def test_create_random_generation(self):
-    result = self.genetic_helper.create_random_generation(5, 2)
+    result = self.genetic_helper.create_random_generation(5, numbers_per_genome=2)
     self.assertEqual(5, len(result))
     self.assertEqual(2 * GenomeHelper.GENES_PER_NUMBER , len(result[0]))
 

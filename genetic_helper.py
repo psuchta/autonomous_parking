@@ -61,7 +61,7 @@ class GeneticHelper:
 
       return new_population
 
-  def mutate_ieee_754_genome(self, binary_genome, probability=0.1):
+  def mutate_ieee_754_genome(self, binary_genome, probability):
     new_genome = []
     # Iterate over all numbers in the genome
     # in the genome each number has length of 16 bits
@@ -76,7 +76,7 @@ class GeneticHelper:
       new_genome.extend(binary_number)
     binary_genome[:] = new_genome
 
-  def mutate_genome(self, binary_genome, probability=0.1):
+  def mutate_genome(self, binary_genome, probability):
     for idx, val in enumerate(binary_genome):
       if random.uniform(0, 1) <= probability:
         # change to opposite binary val

@@ -10,6 +10,9 @@ class NeuralLevel:
     self.is_output = is_output
 
   def set_weights(self, weights):
+    if len(weights) != self.number_of_weights():
+      raise Exception("Length of weights array is incorrect")
+
     weights_for_neuron = self.input_number
     np_weights = np.array(weights)
     
@@ -36,8 +39,6 @@ class NeuralLevel:
       return [ self.convert_to_movment_signal(r) for r in sigmoid_result]
     return sigmoid_result
     
-
-
   def sigmoid(self, x):
     return 1.0 / (1.0 + np.exp(-x))
 

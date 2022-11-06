@@ -13,6 +13,9 @@ class AutonomousControlledCar(ControlledCar):
   def set_genome(self, genome):
     self.genome = genome
     weights = self.genome_helper.genome_to_decimals(self.genome)
+    if self.autonomous_steering_logic.number_of_network_weights() != len(weights):
+      raise Exception("Invalid number of weights in genome")
+
     self.autonomous_steering_logic.set_neural_weights(weights)
 
   def reset(self, pos_x, pos_y):
