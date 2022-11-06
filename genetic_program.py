@@ -3,7 +3,7 @@ from genetic_helper import GeneticHelper
 from cars.autonomous_controlled_car import AutonomousControlledCar
 import pygame
 
-GENERATION_SIZE = 100
+GENERATION_SIZE = 70
 MUTATION_PROBABILITY = 0.01
 
 class GeneticProgram(BaseProgram):
@@ -21,11 +21,14 @@ class GeneticProgram(BaseProgram):
       idx += 1
 
   def add_game_objects(self):
+    car = None
     BaseProgram.add_game_objects(self)
-    genome_array = self.genetic_helper.create_random_generation(GENERATION_SIZE)
-
     for idx in range(GENERATION_SIZE):
-      self.add_car(AutonomousControlledCar(700, 430, self.screen, self))
+      car = AutonomousControlledCar(700, 430, self.screen, self)
+      self.add_car(car)
+
+    numbers_per_genome = car.autonomous_steering_logic.number_of_network_weights()
+    genome_array = self.genetic_helper.create_random_generation(GENERATION_SIZE, numbers_per_genome=numbers_per_genome)
     self.set_cars_genomes(genome_array)
 
   def draw_generation_num(self, gen_num):
@@ -36,7 +39,7 @@ class GeneticProgram(BaseProgram):
   def run_generation(self, gen_num):
     time_passed = 0
     start_time = pygame.time.get_ticks()
-    while not self.exit and any(car.alive for car in self.steerable_cars) and time_passed <= 7000:
+    while not self.exit and any(car.alive for car in self.steerable_cars) and time_passed <= 15000:
       dt = self.clock.get_time() / 1000
       for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -53,7 +56,7 @@ class GeneticProgram(BaseProgram):
     # best_fitness_car[0] - fitness_score
     # best_fitness_car[1] - genome of the best car
     best_fitness_car = (None, None)
-    generation_size = 200
+    generation_size = 500
     for g in range(generation_size):
       if self.exit: break
       self.run_generation(g)
@@ -62,7 +65,7 @@ class GeneticProgram(BaseProgram):
       if best_fitness_car[0] == None or (best_fitness_car[0] < local_best_fitness[0]):
         best_fitness_car = local_best_fitness
 
-      selected_population = self.genetic_helper.tournament_selection(fitness_results, self.steerable_cars, 90)
+      selected_population = self.genetic_helper.tournament_selection(fitness_results, self.steerable_cars, 30)
       # selected_population = self.genetic_helper.roulette_wheel_selection(fitness_results, self.steerable_cars)
       new_population = []
       for i in range(0, len(selected_population)-1, 2):
