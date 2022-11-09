@@ -8,12 +8,12 @@ class GeneticHelper:
   def __init__(self):
     self.genome_helper = GenomeHelper()
 
-  def extract_fitness_from_cars(self, car_population, parking_spot):
-    return [self.fitness(car, parking_spot) for car in car_population]
+  def calculate_fitness_in_cars(self, car_population, parking_spot):
+    for car in car_population: self.fitness(car, parking_spot)
 
-  def best_fitness_index(self, fitness_results, car_population):
-    max_fitness_index = max(range(len(car_population)), key=lambda idx: fitness_results[idx])
-    return  fitness_results[max_fitness_index], car_population[max_fitness_index].genome
+  def best_fitness_car(self, car_population):
+    car = max(car_population, key=lambda car: car.fitness)
+    return  car
 
   def create_random_generation(self, population_size, numbers_per_genome):
     return [self.genome_helper.init_randomly(numbers_per_genome) for _ in range(population_size)]
@@ -34,7 +34,7 @@ class GeneticHelper:
     child2 = parent2[0:position] + parent1[position:length]
     return child1, child2
 
-  def tournament_selection(self, fitness_results, car_population, tournament_size):
+  def tournament_selection(self, car_population, tournament_size):
     if tournament_size > len(car_population):
       raise Exception("Tournament size is greater than car population")
 
@@ -42,9 +42,9 @@ class GeneticHelper:
     population_size = len(car_population)
     
     for idx in range(population_size):
-      tournament_population_idx = random.sample(list(range(population_size)), tournament_size)
-      max_fit_index = max(tournament_population_idx, key=lambda idx: fitness_results[idx])
-      selected.append(car_population[max_fit_index])
+      tournament_population = random.sample(car_population, tournament_size)
+      max_car = max(tournament_population, key=lambda car: car.fitness)
+      selected.append(max_car)
 
     return selected
 
@@ -89,4 +89,6 @@ class GeneticHelper:
     if not car.alive:
       fitness -= 0.1
     print(fitness)
+
+    car.fitness = fitness
     return fitness
