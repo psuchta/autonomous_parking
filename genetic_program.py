@@ -97,7 +97,7 @@ class GeneticProgram(BaseProgram):
     # best_fitness_car[0] - fitness_score
     # best_fitness_car[1] - genome of the best car
     best_fitness_car = (None, None)
-    generation_size = 500
+    generation_size = 2000
     for g in range(generation_size):
       if self.exit: break
       self.run_generation(g)
@@ -112,9 +112,9 @@ class GeneticProgram(BaseProgram):
       for population in divided_population:
         new_population.extend(self.breed_pop(population.tolist()))
 
-      # if not any(genome == best_fitness_car[1] for genome in new_population):
-      #   print('copy best')
-      #   new_population[random.randrange(len(new_population))] = best_fitness_car[1]
+      if not any(genome == best_fitness_car[1] for genome in new_population):
+        print('copy best')
+        new_population[random.randrange(len(new_population))] = best_fitness_car[1]
 
       self.set_cars_genomes(new_population)
       [car.reset(700, 430) for car in self.steerable_cars]

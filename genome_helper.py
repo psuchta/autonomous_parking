@@ -19,7 +19,7 @@ class GenomeHelper:
       raise Exception("Length of passed genome is not correct")
 
     for idx in range(0, genome_length, self.GENES_PER_NUMBER):
-      binary_part = self.binary_converter.bin_to_float(binary_genome[idx:idx + self.GENES_PER_NUMBER])
+      binary_part = self.binary_converter.bin_to_int(binary_genome[idx:idx + self.GENES_PER_NUMBER])
       decimals.append(binary_part)
 
     return decimals
@@ -34,27 +34,18 @@ class GenomeHelper:
     significand = np.random.randint(2, size=significand_count).tolist()
     return sign + exponent + significand
 
+  def init_number_randomly2(self, exponent_count=EXPONENT_COUNT, significand_count=SIGNIFICAND_COUNT):
+    return np.random.randint(2, size=self.GENES_PER_NUMBER).tolist()
+
   def init_randomly(self, numbers_per_genome):
     binary_genome = []
     for _ in range(numbers_per_genome):
-      binary_genome.extend(self.init_number_randomly())
+      binary_genome.extend(self.init_number_randomly2())
     return binary_genome
 
   # If number's exponent part contains only 1s, it means the number is Nan or Infinity
   def check_if_number_forbidden(self, binary_number):
-    if len(binary_number) != self.GENES_PER_NUMBER: 
-      raise Exception("Binary number has wrong length")
-
-    exponent = binary_number[1:self.EXPONENT_COUNT+1]
-    if all(num == 1 for num in exponent):
-      return True
-
     return False
 
   def check_if_any_number_forbidden(self, binary_genome):
-    for idx in range(0, len(binary_genome), self.GENES_PER_NUMBER):
-      binary_number = binary_genome[idx:idx+self.GENES_PER_NUMBER]
-      if self.check_if_number_forbidden(binary_number):
-        return True
-
     return False
