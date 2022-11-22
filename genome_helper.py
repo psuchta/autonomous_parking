@@ -34,13 +34,13 @@ class GenomeHelper:
     significand = np.random.randint(2, size=significand_count).tolist()
     return sign + exponent + significand
 
-  def init_number_randomly2(self, exponent_count=EXPONENT_COUNT, significand_count=SIGNIFICAND_COUNT):
+  def init_u2_number_randomly(self, exponent_count=EXPONENT_COUNT, significand_count=SIGNIFICAND_COUNT):
     return np.random.randint(2, size=self.GENES_PER_NUMBER).tolist()
 
   def init_randomly(self, numbers_per_genome):
     binary_genome = []
     for _ in range(numbers_per_genome):
-      binary_genome.extend(self.init_number_randomly2())
+      binary_genome.extend(self.init_u2_number_randomly())
     return binary_genome
 
   # If number's exponent part contains only 1s, it means the number is Nan or Infinity
