@@ -6,8 +6,10 @@ import numpy as np
 import pygame
 import random
 
-GENERATION_SIZE = 80
+POPULATION_SIZE = 50
 MUTATION_PROBABILITY = 0.01
+CROSSOVER_PROBABILITY = 0.3
+TOURNAMENT_PROCENTAGE = 0.4
 
 class GeneticProgram(BaseProgram):
   def __init__(self):
@@ -16,8 +18,6 @@ class GeneticProgram(BaseProgram):
     BaseProgram.__init__(self)
 
   def set_cars_genomes(self, genome_array):
-    print('print genome')
-    print(len(genome_array))
     if len(self.steerable_cars) != len(genome_array):
       raise Exception("Lengths of passed arrays are not the same")
 
@@ -29,12 +29,12 @@ class GeneticProgram(BaseProgram):
   def add_game_objects(self):
     car = None
     BaseProgram.add_game_objects(self)
-    for idx in range(GENERATION_SIZE):
+    for idx in range(POPULATION_SIZE):
       car = AutonomousControlledCar(700, 430, self.screen, self)
       self.add_car(car)
 
     numbers_per_genome = car.autonomous_steering_logic.number_of_network_weights()
-    genome_array = self.genetic_helper.create_random_generation(GENERATION_SIZE, numbers_per_genome=numbers_per_genome)
+    genome_array = self.genetic_helper.create_random_generation(POPULATION_SIZE, numbers_per_genome=numbers_per_genome)
     self.set_cars_genomes(genome_array)
 
   def draw_generation_num(self, gen_num):
@@ -57,40 +57,30 @@ class GeneticProgram(BaseProgram):
       self.clock.tick(self.fps)
       time_passed = pygame.time.get_ticks() - start_time
 
-  def breed(self, best_fitness_car):
-    local_best_car = self.genetic_helper.best_fitness_car(self.steerable_cars)
-    if best_fitness_car[0] == None or (best_fitness_car[0] < local_best_car.fitness):
-      best_fitness_car = (local_best_car.fitness, local_best_car.genome)
-
-    selected_population = self.genetic_helper.tournament_selection(self.steerable_cars, 30)
-    # selected_population = self.genetic_helper.roulette_wheel_selection(fitness_results, self.steerable_cars)
+  def breed(self, population):
+    tournament_size = self.genetic_helper.population_procentage(population, TOURNAMENT_PROCENTAGE)
+    selected_population = self.genetic_helper.tournament_selection(population, tournament_size)
+    # selected_population = self.genetic_helper.roulette_wheel_selection(population)
     new_population = []
     for i in range(0, len(selected_population)-1, 2):
-      child1, child2 = self.genetic_helper.crossover_ieee_754(selected_population[i].genome, selected_population[i+1].genome)
+      if random.uniform(0, 1) <= CROSSOVER_PROBABILITY:
+        child1, child2 = self.genetic_helper.crossover_ieee_754(selected_population[i].genome, selected_population[i+1].genome)
+      else:
+        child1, child2 = selected_population[i].genome.copy(), selected_population[i+1].genome.copy()
       self.genetic_helper.mutate_ieee_754_genome(child1, MUTATION_PROBABILITY)
       self.genetic_helper.mutate_ieee_754_genome(child2, MUTATION_PROBABILITY)
 
       new_population.append(child1)
       new_population.append(child2)
-
-    if not any(genome == best_fitness_car[1] for genome in new_population):
-      print('copy best')
-      new_population[random.randrange(len(new_population))] = best_fitness_car[1]
 
     return new_population
 
-  def breed_pop(self, population, tournament_procentage = 0.3):
-    selected_population = self.genetic_helper.tournament_selection(population, int(len(population) * tournament_procentage))
-    # selected_population = self.genetic_helper.roulette_wheel_selection(fitness_results, self.steerable_cars)
+  # Population is divided into specified number of segments. Breeding sequence is executed on each segment separately.
+  def breed_with_segments(self, population):
+    divided_population = np.array_split(population, 4)
     new_population = []
-    for i in range(0, len(selected_population)-1, 2):
-      child1, child2 = self.genetic_helper.crossover_ieee_754(selected_population[i].genome, selected_population[i+1].genome)
-      self.genetic_helper.mutate_ieee_754_genome(child1, MUTATION_PROBABILITY)
-      self.genetic_helper.mutate_ieee_754_genome(child2, MUTATION_PROBABILITY)
-
-      new_population.append(child1)
-      new_population.append(child2)
-
+    for local_population in divided_population:
+      new_population.extend(self.breed(local_population.tolist()))
     return new_population
 
   def run(self):
@@ -103,21 +93,14 @@ class GeneticProgram(BaseProgram):
       self.run_generation(g)
       self.genetic_helper.calculate_fitness_in_cars(self.steerable_cars, self.parking_slot)
       self.steerable_cars.sort(key=lambda x: x.fitness, reverse=True)
-      local_best_car = self.genetic_helper.best_fitness_car(self.steerable_cars)
-      if best_fitness_car[0] == None or (best_fitness_car[0] < local_best_car.fitness):
-        best_fitness_car = (local_best_car.fitness, local_best_car.genome)
 
-      divided_population = np.array_split(self.steerable_cars, 4)
-      new_population = []
-      for population in divided_population:
-        new_population.extend(self.breed_pop(population.tolist()))
-
-      if not any(genome == best_fitness_car[1] for genome in new_population):
-        print('copy best')
-        new_population[random.randrange(len(new_population))] = best_fitness_car[1]
-
+      best_fitness_car = self.genetic_helper.set_best_individual(self.steerable_cars, best_fitness_car)
+      new_population = self.breed(self.steerable_cars)
+      # new_population = self.breed_with_segments(self.steerable_cars)
+      self.genetic_helper.copy_best_to_population(new_population, best_fitness_car[1])
       self.set_cars_genomes(new_population)
       [car.reset(700, 430) for car in self.steerable_cars]
+    print("Best car in simulation")
     print(best_fitness_car[0])
     print(best_fitness_car[1])
     print(self.genome_helper.genome_to_decimals(best_fitness_car[1]))

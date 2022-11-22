@@ -8,6 +8,22 @@ class GeneticHelper:
   def __init__(self):
     self.genome_helper = GenomeHelper()
 
+  def population_procentage(self, population, procentage):
+    return int(len(population) * procentage)
+
+  def set_best_individual(self, population, global_best):
+    local_best_car = self.best_fitness_car(population)
+    print(f'{global_best[0]} {local_best_car.fitness}')
+    if global_best[0] == None or (global_best[0] < local_best_car.fitness):
+      return (local_best_car.fitness, local_best_car.genome.copy())
+
+    return global_best
+
+  def copy_best_to_population(self, population, best_genome):
+    if not any(genome == best_genome for genome in population):
+      print('Copy best to the next generation')
+      population[random.randrange(len(population))] = best_genome.copy()
+
   def calculate_fitness_in_cars(self, car_population, parking_spot):
     for car in car_population: self.fitness(car, parking_spot)
 
@@ -48,16 +64,20 @@ class GeneticHelper:
 
     return selected
 
-  def roulette_wheel_selection(self, fitness_results, population):
+  def roulette_wheel_selection(self, car_population):
       new_population = []
+      car_population.sort(key=lambda x: x.fitness, reverse=True)
+      # Descending order
+      fitness_results = [car.fitness for car in car_population]
+      # Get rid off negative fitnesses
+      min_in_fitness = fitness_results[-1]
+      fitness_results = [fitness - min_in_fitness for fitness in fitness_results]
 
-      min_in_fitness = min(fitness_results)
-      fitness_results = [f - min_in_fitness for f in fitness_results]
       max_fitness = sum(fitness_results)
 
-      selection_probs = [f/max_fitness for f in fitness_results]
-      for i in range(len(population)):
-        new_population.append(population[np.random.choice(len(population), p=selection_probs)])
+      selection_probs = [fitness/max_fitness for fitness in fitness_results]
+      for i in range(len(car_population)):
+        new_population.append(car_population[np.random.choice(len(car_population), p=selection_probs)])
 
       return new_population
 
@@ -88,7 +108,6 @@ class GeneticHelper:
     fitness = 1/(distance_loss+1)
     if not car.alive:
       fitness -= 0.1
-    print(fitness)
 
     car.fitness = fitness
     return fitness
