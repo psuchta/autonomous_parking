@@ -3,7 +3,7 @@ import numpy as np
 import math
 
 class BinaryConverter:
-  BITS_COUNT = 8
+  BITS_COUNT = 6
   EXPONENT_COUNT = 5
   SIGNIFICAND_COUNT = 10
   BIAS_UNITS = 1
