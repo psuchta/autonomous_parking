@@ -3,15 +3,32 @@ import numpy as np
 import math
 
 class BinaryConverter:
-  BITS_COUNT = 16
+  BITS_COUNT = 6
   EXPONENT_COUNT = 5
   SIGNIFICAND_COUNT = 10
   BIAS_UNITS = 1
 
+  # Using Two's Complement Numbers/U2 for binary representation
+  def int_to_bin(self, num):
+    s = bin(num & int("1"*self.BITS_COUNT, 2))[2:]
+    binary_string =  ("{0:0>%s}" % (self.BITS_COUNT)).format(s)
+    return self.string_to_int_array(binary_string)
+
+  # Using Two's Complement Numbers/U2 for binary representation
+  def bin_to_int(self, binary):
+    string_binary = "".join(str(x) for x in binary)
+    val = int(string_binary, 2)
+
+    if (val & (1 << (self.BITS_COUNT - 1))) != 0:
+        val = val - (1 << self.BITS_COUNT)
+    return val
+
+  # Using IEEE574 for binary representation
   def float_to_bin(self, num):
     binary_string = bin(np.float16(num).view('H'))[2:].zfill(16)
     return self.string_to_int_array(binary_string)
 
+  # Using IEEE574 for binary representation
   def bin_to_float(self, binary):
     string_binary = "".join(str(x) for x in binary)
     y = struct.pack("H", int(string_binary, 2))

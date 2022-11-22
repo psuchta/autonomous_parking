@@ -33,6 +33,21 @@ class Car(pygame.sprite.Sprite):
 
   def distance_to_parking(self, parking_spot):
     distances = []
+    pivot = self.rect.center
+    rect = self.original.get_rect(center = pivot)
+
+    pts = [rect.topleft, rect.topright, rect.bottomright, rect.bottomleft]
+    pts = [(pygame.math.Vector2(p) - pivot).rotate(-self.angle) + pivot for p in pts]
+
+    distances.append(self.distance_between_points(pts[0], parking_spot.rect.topleft))
+    distances.append(self.distance_between_points(pts[3], parking_spot.rect.bottomleft))
+    distances.append(self.distance_between_points(pts[1], parking_spot.rect.topright))
+    distances.append(self.distance_between_points(pts[2], parking_spot.rect.bottomright))
+    average_distance = (sum(distances)/len(distances))/meter_scale
+    return average_distance
+
+  def old_distance_to_parking(self, parking_spot):
+    distances = []
     distances.append(self.distance_between_points(self.rect.topleft, parking_spot.rect.topleft))
     distances.append(self.distance_between_points(self.rect.bottomleft, parking_spot.rect.bottomleft))
     distances.append(self.distance_between_points(self.rect.topright, parking_spot.rect.topright))

@@ -9,6 +9,7 @@ class AutonomousControlledCar(ControlledCar):
     self.autonomous_steering_logic = AutonomousSteeringLogic()
     self.genome_helper = GenomeHelper()
     self.genome = []
+    self.fitness = None
 
   def set_genome(self, genome):
     self.genome = genome

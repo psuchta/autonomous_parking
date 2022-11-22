@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 from genetic_helper import GeneticHelper
 from genome_helper import GenomeHelper
+from unittest.mock import Mock
 
 class TestGeneticHelper(unittest.TestCase):
   def setUp(self):
@@ -44,9 +45,27 @@ class TestGeneticHelper(unittest.TestCase):
     self.assertEqual(2 * GenomeHelper.GENES_PER_NUMBER , len(result[0]))
 
   def test_tournament_selection(self):
-    # fitness_results, car_population, tournament_size
-    result = self.genetic_helper.tournament_selection([1,7,3,4,5], [1, 2, 3, 4, 5], 5)
-    self.assertEqual([2, 2, 2, 2, 2], result)
+    car_population = [Mock(fitness=3), Mock(fitness=2), Mock(fitness=1)]
+    # car_population, tournament_size
+    selected_population = self.genetic_helper.tournament_selection(car_population, 3)
+    fitness_results = [car.fitness for car in selected_population]
+
+    self.assertEqual([3, 3, 3], fitness_results)
+
+  def test_genetic_program_flow(self):
+    self.genome_helper = GenomeHelper()
+
+    car_population = [Mock(fitness=3, genome=self.genome_helper.init_number_randomly()), Mock(fitness=2, genome=self.genome_helper.init_number_randomly())]
+    selected_population = self.genetic_helper.tournament_selection(car_population, 2)
+
+    for i in range(0, len(selected_population)-1, 2):
+      child1, child2 = self.genetic_helper.crossover_ieee_754(selected_population[i].genome, selected_population[i+1].genome)
+      self.genetic_helper.mutate_ieee_754_genome(child1, 0.5)
+      self.genetic_helper.mutate_ieee_754_genome(child2, 0.5)
+
+      selected_population[i].genome = child1
+      selected_population[i+1].genome = child2
+
 
 
 if __name__ == '__main__':
