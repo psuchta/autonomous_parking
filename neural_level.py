@@ -34,13 +34,17 @@ class NeuralLevel:
     multi = self.neuron_weights.dot(input_data_column)
     res = multi + self.neuron_biases
     res_flatten = res.flatten()
-    sigmoid_result = [ self.sigmoid(r) for r in res_flatten]
     if self.is_output:
+      sigmoid_result = [ self.sigmoid(r) for r in res_flatten]
       return [ self.convert_to_movment_signal(r) for r in sigmoid_result]
-    return sigmoid_result
+    else:
+      return [self.relu(r) for r in res_flatten]
     
   def sigmoid(self, x):
     return 1.0 / (1.0 + np.exp(-x))
+
+  def relu(self, x):
+    return np.maximum(0, x)
 
   def convert_to_movment_signal(self, sigmoid_value, margin = 0.4):
     if sigmoid_value > (0.9):
