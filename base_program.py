@@ -18,7 +18,7 @@ class BaseProgram:
     pygame.display.set_caption('Car parking with fuzzy sets')
     self.screen = pygame.display.set_mode((screen_width, screen_height))
     self.clock = pygame.time.Clock()
-    self.fps = 60
+    self.fps = 30
     self.add_game_objects()
     self.exit = False
 

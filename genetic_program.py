@@ -83,11 +83,21 @@ class GeneticProgram(BaseProgram):
       new_population.extend(self.breed(local_population.tolist()))
     return new_population
 
+  def save_population_to_file(self, population, file_name="last_population"):
+    genomes = [car.genome for car in population]
+    data = np.asarray(genomes)
+    np.savetxt(f'genetic/{file_name}.csv', data, fmt='%i', delimiter=',')
+
+  def laod_population_from_file(self, file_name="last_population"):
+    data = np.loadtxt(f'genetic/{file_name}.csv', dtype='int', delimiter=',')
+    self.set_cars_genomes(data.tolist())
+
   def run(self):
     # best_fitness_car[0] - fitness_score
     # best_fitness_car[1] - genome of the best car
     best_fitness_car = (None, None)
     generation_size = 2000
+    self.laod_population_from_file()
     for g in range(generation_size):
       if self.exit: break
       self.run_generation(g)
@@ -104,4 +114,5 @@ class GeneticProgram(BaseProgram):
     print(best_fitness_car[0])
     print(best_fitness_car[1])
     print(self.genome_helper.genome_to_decimals(best_fitness_car[1]))
+    self.save_population_to_file(self.steerable_cars)
     pygame.quit()
