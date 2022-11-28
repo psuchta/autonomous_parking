@@ -1,17 +1,16 @@
 import struct
 import numpy as np
 import math
+from genetic.settings import settings
 
 class BinaryConverter:
-  BITS_COUNT = 6
-  EXPONENT_COUNT = 5
-  SIGNIFICAND_COUNT = 10
-  BIAS_UNITS = 1
+  def __init__(self):
+    self.bits_count = settings['binary_number_bits']
 
   # Using Two's Complement Numbers/U2 for binary representation
   def int_to_bin(self, num):
-    s = bin(num & int("1"*self.BITS_COUNT, 2))[2:]
-    binary_string =  ("{0:0>%s}" % (self.BITS_COUNT)).format(s)
+    s = bin(num & int("1"*self.bits_count, 2))[2:]
+    binary_string =  ("{0:0>%s}" % (self.bits_count)).format(s)
     return self.string_to_int_array(binary_string)
 
   # Using Two's Complement Numbers/U2 for binary representation
@@ -19,8 +18,8 @@ class BinaryConverter:
     string_binary = "".join(str(x) for x in binary)
     val = int(string_binary, 2)
 
-    if (val & (1 << (self.BITS_COUNT - 1))) != 0:
-        val = val - (1 << self.BITS_COUNT)
+    if (val & (1 << (self.bits_count - 1))) != 0:
+        val = val - (1 << self.bits_count)
     return val
 
   # Using IEEE574 for binary representation

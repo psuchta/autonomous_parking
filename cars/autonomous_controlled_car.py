@@ -1,21 +1,22 @@
 from cars.controlled_car import ControlledCar
-from genome_helper import GenomeHelper
+from chromosome_helper import ChromosomeHelper
 from autonomous_steering_logic import AutonomousSteeringLogic
+from genetic.neural_from_internet.autonomous_steering_logic2 import AutonomousSteeringLogic2
 import math
 
 class AutonomousControlledCar(ControlledCar):
   def __init__(self, pos_x, pos_y, screen, game):
     ControlledCar.__init__(self, pos_x, pos_y, screen, game)
     self.autonomous_steering_logic = AutonomousSteeringLogic()
-    self.genome_helper = GenomeHelper()
-    self.genome = []
+    self.chromosome_helper = ChromosomeHelper()
+    self.chromosome = []
     self.fitness = None
 
-  def set_genome(self, genome):
-    self.genome = genome
-    weights = self.genome_helper.genome_to_decimals(self.genome)
+  def set_chromosome(self, chromosome):
+    self.chromosome = chromosome
+    weights = self.chromosome_helper.genome_to_decimals(self.chromosome)
     if self.autonomous_steering_logic.number_of_network_weights() != len(weights):
-      raise Exception("Invalid number of weights in genome")
+      raise Exception("Invalid number of weights in chromosome")
 
     self.autonomous_steering_logic.set_neural_weights(weights)
 

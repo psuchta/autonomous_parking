@@ -1,41 +1,38 @@
 from base_program import BaseProgram
 from genetic_helper import GeneticHelper
-from genome_helper import GenomeHelper
+from chromosome_helper import ChromosomeHelper
 from cars.autonomous_controlled_car import AutonomousControlledCar
 import numpy as np
 import pygame
 import random
-
-POPULATION_SIZE = 50
-MUTATION_PROBABILITY = 0.01
-CROSSOVER_PROBABILITY = 0.3
-TOURNAMENT_PROCENTAGE = 0.4
+from genetic.settings import settings
 
 class GeneticProgram(BaseProgram):
   def __init__(self):
+    self.settings = settings
     self.genetic_helper = GeneticHelper()
-    self.genome_helper = GenomeHelper()
+    self.chromosome_helper = ChromosomeHelper()
     BaseProgram.__init__(self)
 
-  def set_cars_genomes(self, genome_array):
-    if len(self.steerable_cars) != len(genome_array):
+  def set_cars_chromosomes(self, chromosome_array):
+    if len(self.steerable_cars) != len(chromosome_array):
       raise Exception("Lengths of passed arrays are not the same")
 
     idx = 0
-    for genome in genome_array:
-      self.steerable_cars[idx].set_genome(genome)
+    for chromosome in chromosome_array:
+      self.steerable_cars[idx].set_chromosome(chromosome)
       idx += 1
 
   def add_game_objects(self):
     car = None
     BaseProgram.add_game_objects(self)
-    for idx in range(POPULATION_SIZE):
+    for idx in range(self.settings['population_size']):
       car = AutonomousControlledCar(700, 430, self.screen, self)
       self.add_car(car)
 
-    numbers_per_genome = car.autonomous_steering_logic.number_of_network_weights()
-    genome_array = self.genetic_helper.create_random_generation(POPULATION_SIZE, numbers_per_genome=numbers_per_genome)
-    self.set_cars_genomes(genome_array)
+    numbers_per_chromosome = car.autonomous_steering_logic.number_of_network_weights()
+    chromosome_array = self.genetic_helper.create_random_generation(self.settings['population_size'], numbers_per_chromosome=numbers_per_chromosome)
+    self.set_cars_chromosomes(chromosome_array)
 
   def draw_generation_num(self, gen_num):
     font = pygame.font.Font('freesansbold.ttf', 10)
@@ -58,17 +55,18 @@ class GeneticProgram(BaseProgram):
       time_passed = pygame.time.get_ticks() - start_time
 
   def breed(self, population):
-    tournament_size = self.genetic_helper.population_procentage(population, TOURNAMENT_PROCENTAGE)
+    tournament_size = self.genetic_helper.population_procentage(population, self.settings['tournament_procentage'])
     selected_population = self.genetic_helper.tournament_selection(population, tournament_size)
     # selected_population = self.genetic_helper.roulette_wheel_selection(population)
     new_population = []
+    random.shuffle(selected_population)
     for i in range(0, len(selected_population)-1, 2):
-      if random.uniform(0, 1) <= CROSSOVER_PROBABILITY:
-        child1, child2 = self.genetic_helper.crossover_ieee_754(selected_population[i].genome, selected_population[i+1].genome)
+      if random.uniform(0, 1) <= self.settings['crossover_probability']:
+        child1, child2 = self.genetic_helper.crossover(selected_population[i].chromosome, selected_population[i+1].chromosome)
       else:
-        child1, child2 = selected_population[i].genome.copy(), selected_population[i+1].genome.copy()
-      self.genetic_helper.mutate_ieee_754_genome(child1, MUTATION_PROBABILITY)
-      self.genetic_helper.mutate_ieee_754_genome(child2, MUTATION_PROBABILITY)
+        child1, child2 = selected_population[i].chromosome.copy(), selected_population[i+1].chromosome.copy()
+      self.genetic_helper.mutate_chromosome(child1, self.settings['mutation_probability'])
+      self.genetic_helper.mutate_chromosome(child2, self.settings['mutation_probability'])
 
       new_population.append(child1)
       new_population.append(child2)
@@ -84,35 +82,34 @@ class GeneticProgram(BaseProgram):
     return new_population
 
   def save_population_to_file(self, population, file_name="last_population"):
-    genomes = [car.genome for car in population]
-    data = np.asarray(genomes)
+    chromosomes = [car.chromosome for car in population]
+    data = np.asarray(chromosomes)
     np.savetxt(f'genetic/{file_name}.csv', data, fmt='%i', delimiter=',')
 
   def laod_population_from_file(self, file_name="last_population"):
     data = np.loadtxt(f'genetic/{file_name}.csv', dtype='int', delimiter=',')
-    self.set_cars_genomes(data.tolist())
+    self.set_cars_chromosomes(data.tolist())
 
   def run(self):
     # best_fitness_car[0] - fitness_score
-    # best_fitness_car[1] - genome of the best car
+    # best_fitness_car[1] - chromosome of the best car
     best_fitness_car = (None, None)
     generation_size = 2000
-    self.laod_population_from_file()
+    # self.laod_population_from_file()
     for g in range(generation_size):
       if self.exit: break
       self.run_generation(g)
       self.genetic_helper.calculate_fitness_in_cars(self.steerable_cars, self.parking_slot)
-      self.steerable_cars.sort(key=lambda x: x.fitness, reverse=True)
 
       best_fitness_car = self.genetic_helper.set_best_individual(self.steerable_cars, best_fitness_car)
       new_population = self.breed(self.steerable_cars)
       # new_population = self.breed_with_segments(self.steerable_cars)
-      self.genetic_helper.copy_best_to_population(new_population, best_fitness_car[1])
-      self.set_cars_genomes(new_population)
+      # self.genetic_helper.copy_best_to_population(new_population, best_fitness_car[1])
+      self.set_cars_chromosomes(new_population)
       [car.reset(700, 430) for car in self.steerable_cars]
     print("Best car in simulation")
     print(best_fitness_car[0])
     print(best_fitness_car[1])
-    print(self.genome_helper.genome_to_decimals(best_fitness_car[1]))
-    self.save_population_to_file(self.steerable_cars)
+    print(self.chromosome_helper.genome_to_decimals(best_fitness_car[1]))
+    # self.save_population_to_file(self.steerable_cars)
     pygame.quit()
