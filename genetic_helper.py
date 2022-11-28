@@ -1,12 +1,14 @@
 import random
-from genome_helper import GenomeHelper
+from chromosome_helper import ChromosomeHelper
 import pygame
 import numpy as np
+from genetic.settings import settings
 
 class GeneticHelper:
 
   def __init__(self):
-    self.genome_helper = GenomeHelper()
+    self.chromosome_helper = ChromosomeHelper()
+    self.binary_number_bits = settings['binary_number_bits']
 
   def population_procentage(self, population, procentage):
     return int(len(population) * procentage)
@@ -15,14 +17,14 @@ class GeneticHelper:
     local_best_car = self.best_fitness_car(population)
     print(f'{global_best[0]} {local_best_car.fitness}')
     if global_best[0] == None or (global_best[0] < local_best_car.fitness):
-      return (local_best_car.fitness, local_best_car.genome.copy())
+      return (local_best_car.fitness, local_best_car.chromosome.copy())
 
     return global_best
 
-  def copy_best_to_population(self, population, best_genome):
-    if not any(genome == best_genome for genome in population):
+  def copy_best_to_population(self, population, best_chromosome):
+    if not any(chromosome == best_chromosome for chromosome in population):
       print('Copy best to the next generation')
-      population[random.randrange(len(population))] = best_genome.copy()
+      population[random.randrange(len(population))] = best_chromosome.copy()
 
   def calculate_fitness_in_cars(self, car_population, parking_spot):
     for car in car_population: self.fitness(car, parking_spot)
@@ -31,15 +33,8 @@ class GeneticHelper:
     car = max(car_population, key=lambda car: car.fitness)
     return  car
 
-  def create_random_generation(self, population_size, numbers_per_genome):
-    return [self.genome_helper.init_randomly(numbers_per_genome) for _ in range(population_size)]
-
-  def crossover_ieee_754(self, parent1, parent2):
-    child1, child2 = self.crossover(parent1, parent2)
-    # Check if children dont't contain any Nan or Infinity
-    while self.genome_helper.check_if_any_number_forbidden(child1) or self.genome_helper.check_if_any_number_forbidden(child2) :
-      child1, child2 = self.crossover(parent1, parent2)
-    return child1, child2
+  def create_random_generation(self, population_size, numbers_per_chromosome):
+    return [self.chromosome_helper.init_randomly(numbers_per_chromosome) for _ in range(population_size)]
 
   def crossover(self, parent1, parent2):
     if len(parent1) != len(parent2):
@@ -53,7 +48,7 @@ class GeneticHelper:
   def tournament_selection(self, car_population, tournament_size):
     if tournament_size > len(car_population):
       raise Exception("Tournament size is greater than car population")
-
+    random.shuffle(car_population)
     selected = []
     population_size = len(car_population)
     
@@ -81,26 +76,21 @@ class GeneticHelper:
 
       return new_population
 
-  def mutate_ieee_754_genome(self, binary_genome, probability):
-    new_genome = []
-    # Iterate over all numbers in the genome
-    # in the genome each number has length of 16 bits
-    for idx in range(0, len(binary_genome), GenomeHelper.GENES_PER_NUMBER):
-      binary_number = binary_genome[idx:idx+GenomeHelper.GENES_PER_NUMBER]
+  def mutate_chromosome(self, chromosome, probability):
+    new_chromosome = []
+    # Iterate over all numbers in the chromosome
+    # in the chromosome each number has length of x bits (check genetic.settings)
+    for idx in range(0, len(chromosome), self.binary_number_bits):
+      chromosome_number = chromosome[idx:idx+self.binary_number_bits]
+      self.mutate_chromosome_number(chromosome_number, probability)
+      new_chromosome.extend(chromosome_number)
+    chromosome[:] = new_chromosome
 
-      self.mutate_genome(binary_number, probability)
-      # Repeat mutation process on original number until binary isn't Nan or Inifinity
-      while self.genome_helper.check_if_number_forbidden(binary_number):
-        binary_number = binary_genome[idx:idx+GenomeHelper.GENES_PER_NUMBER]
-        self.mutate_genome(binary_number, probability)
-      new_genome.extend(binary_number)
-    binary_genome[:] = new_genome
-
-  def mutate_genome(self, binary_genome, probability):
-    for idx, val in enumerate(binary_genome):
+  def mutate_chromosome_number(self, chromosome_number, probability):
+    for idx, val in enumerate(chromosome_number):
       if random.uniform(0, 1) <= probability:
         # change to opposite binary val
-        binary_genome[idx] = 1 - val
+        chromosome_number[idx] = 1 - val
 
   def fitness(self, car, parking_spot):
     distance_loss = car.distance_to_point(parking_spot.rect.center)
