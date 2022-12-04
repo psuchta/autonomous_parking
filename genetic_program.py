@@ -55,9 +55,12 @@ class GeneticProgram(BaseProgram):
       time_passed = pygame.time.get_ticks() - start_time
 
   def breed(self, population):
-    tournament_size = self.genetic_helper.population_procentage(population, self.settings['tournament_procentage'])
-    selected_population = self.genetic_helper.tournament_selection(population, tournament_size)
-    # selected_population = self.genetic_helper.roulette_wheel_selection(population)
+    selected_population = None
+    if self.settings['selection_method'] == 'tournament':
+      tournament_size = self.genetic_helper.population_procentage(population, self.settings['tournament_procentage'])
+      selected_population = self.genetic_helper.tournament_selection(population, tournament_size)
+    elif self.settings['selection_method'] == 'roulette':
+      selected_population = self.genetic_helper.roulette_wheel_selection(population)
     new_population = []
     random.shuffle(selected_population)
     for i in range(0, len(selected_population)-1, 2):
@@ -75,7 +78,8 @@ class GeneticProgram(BaseProgram):
 
   # Population is divided into specified number of segments. Breeding sequence is executed on each segment separately.
   def breed_with_segments(self, population):
-    divided_population = np.array_split(population, 4)
+    population.sort(key=lambda x: x.fitness, reverse=True)
+    divided_population = np.array_split(population, 2)
     new_population = []
     for local_population in divided_population:
       new_population.extend(self.breed(local_population.tolist()))
@@ -102,8 +106,10 @@ class GeneticProgram(BaseProgram):
       self.genetic_helper.calculate_fitness_in_cars(self.steerable_cars, self.parking_slot)
 
       best_fitness_car = self.genetic_helper.set_best_individual(self.steerable_cars, best_fitness_car)
-      new_population = self.breed(self.steerable_cars)
-      # new_population = self.breed_with_segments(self.steerable_cars)
+      if self.settings['breeding_method'] == 'default':
+        new_population = self.breed(self.steerable_cars)
+      elif self.settings['breeding_method'] == 'segments':
+        new_population = self.breed_with_segments(self.steerable_cars)
       # self.genetic_helper.copy_best_to_population(new_population, best_fitness_car[1])
       self.set_cars_chromosomes(new_population)
       [car.reset(700, 430) for car in self.steerable_cars]

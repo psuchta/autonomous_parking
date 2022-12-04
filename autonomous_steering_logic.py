@@ -8,9 +8,9 @@ class AutonomousSteeringLogic:
   def create_neural_network(self):
     self.neural_network = NeuralNetwork()
     # Hidden layer and Output Layer
-    self.neural_network.add_level(10, 5)
-    self.neural_network.add_level(5, 5)
-    self.neural_network.add_level(5, 4)
+    self.neural_network.add_level(10, 10)
+    self.neural_network.add_level(10, 10)
+    self.neural_network.add_level(10, 4)
 
   def set_neural_weights(self, weights):
     self.neural_network.set_weights(weights)
