@@ -77,20 +77,16 @@ class GeneticHelper:
       return new_population
 
   def mutate_chromosome(self, chromosome, probability):
-    new_chromosome = []
-    # Iterate over all numbers in the chromosome
-    # in the chromosome each number has length of x bits (check genetic.settings)
-    for idx in range(0, len(chromosome), self.binary_number_bits):
-      chromosome_number = chromosome[idx:idx+self.binary_number_bits]
-      self.mutate_chromosome_number(chromosome_number, probability)
-      new_chromosome.extend(chromosome_number)
-    chromosome[:] = new_chromosome
+    for idx, val in enumerate(chromosome):
+      if random.uniform(0, 1) <= probability:
+        # change to opposite binary val
+        chromosome[idx] = self.chromosome_helper.mutate_number(val)
 
   def mutate_chromosome_number(self, chromosome_number, probability):
     for idx, val in enumerate(chromosome_number):
       if random.uniform(0, 1) <= probability:
         # change to opposite binary val
-        chromosome_number[idx] = 1 - val
+        chromosome_number[idx] = self.chromosome_helper.mutate_number(val)
 
   def fitness(self, car, parking_spot):
     distance_loss = car.distance_to_point(parking_spot.rect.center)
