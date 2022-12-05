@@ -18,14 +18,11 @@ class AutonomousSteeringLogic:
   def number_of_network_weights(self):
     return self.neural_network.number_of_weights()
 
-  def get_steering_dict(self, sensors_input):
-    ew = self.neural_network.compute_output(sensors_input)
-    # print('results ')
-    # print(ew)
-    up = ew[0]
-    down = ew[1]
-    left = ew[2]
-    right = ew[3]
+  def map_steering(self, outputs):
+    up = outputs[0]
+    down = outputs[1]
+    left = outputs[2]
+    right = outputs[3]
 
     steering_dict = {
       'up': False,
@@ -45,4 +42,9 @@ class AutonomousSteeringLogic:
     if right == 1:
       steering_dict['right'] = True
     return steering_dict
+
+
+  def get_steering_dict(self, sensors_input):
+    outputs = self.neural_network.compute_output(sensors_input)
+    return self.map_steering(outputs)
 
