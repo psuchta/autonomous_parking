@@ -21,5 +21,6 @@ class GeneticSteeringLogic(SteeringInterface):
 
   def get_steering_dict(self, sensors_input):
     outputs = self.neural_network.compute_output(sensors_input)
-    return self.map_steering(outputs)
+    move_outputs = [ self.convert_to_movment_signal(o) for o in outputs]
+    return self.map_steering(move_outputs)
 

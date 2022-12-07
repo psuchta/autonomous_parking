@@ -2,6 +2,12 @@ class SteeringInterface:
   def set_neural_weights(self, weights):
     pass
 
+  def convert_to_movment_signal(self, sigmoid_value, margin = 0.4):
+    if sigmoid_value > (0.9):
+      return 1
+    else:
+      return 0
+
   def map_steering(self, outputs):
     up = outputs[0]
     down = outputs[1]
