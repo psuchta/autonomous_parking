@@ -1,6 +1,6 @@
 from base_program import BaseProgram
-from genetic_helper import GeneticHelper
-from chromosome_helper import ChromosomeHelper
+from genetic.genetic_helper import GeneticHelper
+from genetic.chromosome_helper import ChromosomeHelper
 from cars.genetic_controlled_car import GeneticControlledCar
 import numpy as np
 import pygame

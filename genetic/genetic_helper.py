@@ -1,8 +1,8 @@
 import random
-from chromosome_helper import ChromosomeHelper
+from genetic.chromosome_helper import ChromosomeHelper
+from genetic.settings import settings
 import pygame
 import numpy as np
-from genetic.settings import settings
 
 class GeneticHelper:
 

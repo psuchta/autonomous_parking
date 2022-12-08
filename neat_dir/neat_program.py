@@ -1,7 +1,7 @@
 from cars.autonomous_controlled_car import AutonomousControlledCar
 from cars.neat_controlled_car import NeatControlledCar
 from base_program import BaseProgram
-from genetic_helper import GeneticHelper
+from genetic.genetic_helper import GeneticHelper
 import pygame
 import os
 import neat
@@ -41,7 +41,7 @@ class NeatProgram(BaseProgram):
           self.exit = True      
       self.draw_objects(dt)
       self.draw_generation_num(1)
-      # self.genetic_helper.fitness(self.steerable_cars[0], self.parking_slot)
+
       pygame.display.flip()
       self.clock.tick(self.fps)
       time_passed = pygame.time.get_ticks() - start_time

@@ -1,4 +1,4 @@
-from neural_level import NeuralLevel
+from genetic.neural_level import NeuralLevel
 
 class NeuralNetwork:
 

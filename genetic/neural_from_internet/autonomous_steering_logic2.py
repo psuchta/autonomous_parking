@@ -1,4 +1,4 @@
-from neural_network import NeuralNetwork
+from genetic.neural_network import NeuralNetwork
 from genetic.neural_from_internet.feed_forward_network import FeedForwardNetwork, linear, sigmoid, tanh, relu, leaky_relu, ActivationFunction, get_activation_by_name
 import numpy as np
 class AutonomousSteeringLogic2:

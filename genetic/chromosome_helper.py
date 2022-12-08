@@ -1,5 +1,5 @@
 from cars.controlled_car import ControlledCar
-from binary_converter import BinaryConverter
+from genetic.binary_converter import BinaryConverter
 from genetic.settings import settings
 import numpy as np
 

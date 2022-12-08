@@ -1,4 +1,4 @@
-from neural_network import NeuralNetwork
+from genetic.neural_network import NeuralNetwork
 from cars.steering_logic.steering_interface import SteeringInterface
 
 class GeneticSteeringLogic(SteeringInterface):
