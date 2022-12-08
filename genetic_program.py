@@ -18,10 +18,8 @@ class GeneticProgram(BaseProgram):
     if len(self.steerable_cars) != len(chromosome_array):
       raise Exception("Lengths of passed arrays are not the same")
 
-    idx = 0
-    for chromosome in chromosome_array:
+    for idx, chromosome in enumerate(chromosome_array):
       self.steerable_cars[idx].set_chromosome(chromosome)
-      idx += 1
 
   def add_game_objects(self):
     car = None
