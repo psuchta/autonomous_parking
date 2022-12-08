@@ -2,9 +2,10 @@
 
 The aim of the project is to create three different models for autonomous parking.
 
-* Genetic algorythm
-* Fuzzy sets
+* Genetic algorithm
+* NEAT algorithm
 * Deep learning
+* Fuzzy sets [In the future]
 
 Run the program
  ```
