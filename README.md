@@ -1,4 +1,5 @@
-# Fuzzy parking
+# Autonomous Parking
+
 
 The aim of the project is to create three different models for autonomous parking.
 
