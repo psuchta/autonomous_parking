@@ -35,8 +35,7 @@ class NeuralLevel:
     res = multi + self.neuron_biases
     res_flatten = res.flatten()
     if self.is_output:
-      sigmoid_result = [ self.sigmoid(r) for r in res_flatten]
-      return [ self.convert_to_movment_signal(r) for r in sigmoid_result]
+      return [ self.sigmoid(r) for r in res_flatten]
     else:
       return [self.relu(r) for r in res_flatten]
     

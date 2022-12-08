@@ -1,7 +1,6 @@
 
 import pygame
 import os
-from cars.autonomous_controlled_car import AutonomousControlledCar
 from cars.not_steerable_car import NotSteerableCar
 from parking_slot import ParkingSlot
 from world.settings import *

@@ -1,7 +1,7 @@
 from base_program import BaseProgram
-from genetic_helper import GeneticHelper
-from chromosome_helper import ChromosomeHelper
-from cars.autonomous_controlled_car import AutonomousControlledCar
+from genetic.genetic_helper import GeneticHelper
+from genetic.chromosome_helper import ChromosomeHelper
+from cars.genetic_controlled_car import GeneticControlledCar
 import numpy as np
 import pygame
 import random
@@ -18,16 +18,14 @@ class GeneticProgram(BaseProgram):
     if len(self.steerable_cars) != len(chromosome_array):
       raise Exception("Lengths of passed arrays are not the same")
 
-    idx = 0
-    for chromosome in chromosome_array:
+    for idx, chromosome in enumerate(chromosome_array):
       self.steerable_cars[idx].set_chromosome(chromosome)
-      idx += 1
 
   def add_game_objects(self):
     car = None
     BaseProgram.add_game_objects(self)
     for idx in range(self.settings['population_size']):
-      car = AutonomousControlledCar(700, 430, self.screen, self)
+      car = GeneticControlledCar(700, 430, self.screen, self)
       self.add_car(car)
 
     numbers_per_chromosome = car.autonomous_steering_logic.number_of_network_weights()
