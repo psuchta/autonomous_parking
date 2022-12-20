@@ -2,6 +2,8 @@ from base_program import BaseProgram
 from deep_learning.neural_model import LinearQNet, QTrainer
 from cars.deep_controlled_car import DeepControlledCar
 from collections import deque
+import pygame
+from genetic.genetic_helper import GeneticHelper
 # from memory import ReplayMemory
 
 MAX_MEMORY = 100_000
@@ -10,6 +12,7 @@ LR = 0.001
 
 class DeepProgram(BaseProgram):
   def __init__(self):
+    self.genetic_helper = GeneticHelper()
     self.memory = deque(maxlen=MAX_MEMORY) # popleft()
     self.gamma = 0.9
     BaseProgram.__init__(self)
@@ -57,3 +60,31 @@ class DeepProgram(BaseProgram):
         final_move[move] = 1
 
     return final_move
+
+  def play_step(self, game_num, delta_time):
+    self.draw_objects(delta_time)
+    self.draw_generation_num(game_num)
+    print(self.genetic_helper.fitness(self.steerable_cars[0], self.parking_slot))
+
+  def draw_generation_num(self, gen_num):
+    font = pygame.font.Font('freesansbold.ttf', 10)
+    text = font.render('Generation:' + str(gen_num), True, (255, 255, 255))
+    self.screen.blit(text, (20,10))
+
+
+  def run(self):
+    while not self.exit:
+      start_time = pygame.time.get_ticks()
+      time_passed = 0
+      while not self.exit and any(car.alive for car in self.steerable_cars) and time_passed <= 15000:
+        dt = self.clock.get_time() / 1000
+        for event in pygame.event.get():
+          if event.type == pygame.QUIT:
+            self.exit = True      
+        self.play_step(1, dt)
+        # self.genetic_helper.fitness(self.steerable_cars[0], self.parking_slot)
+        pygame.display.flip()
+        self.clock.tick(self.fps)
+        time_passed = pygame.time.get_ticks() - start_time
+      [car.reset(700, 430) for car in self.steerable_cars]
+    pygame.quit()
