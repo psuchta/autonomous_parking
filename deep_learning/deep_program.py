@@ -1,6 +1,6 @@
 from base_program import BaseProgram
 from deep_learning.neural_model import LinearQNet, QTrainer
-from cars.autonomous_controlled_car import AutonomousControlledCar
+from cars.deep_controlled_car import DeepControlledCar
 from collections import deque
 # from memory import ReplayMemory
 
@@ -11,21 +11,20 @@ LR = 0.001
 class DeepProgram(BaseProgram):
   def __init__(self):
     self.memory = deque(maxlen=MAX_MEMORY) # popleft()
-    self.model = LinearQNet(11, 4)
     self.gamma = 0.9
-    self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
     BaseProgram.__init__(self)
+    self.car_steering_model = self.steerable_cars[0].autonomous_steering_logic.neural_network
+    self.trainer = QTrainer(self.car_steering_model, lr=LR, gamma=self.gamma)
 
   def add_game_objects(self):
     car = None
     BaseProgram.add_game_objects(self)
-    car = AutonomousControlledCar(700, 430, self.screen, self)
+    car = DeepControlledCar(700, 430, self.screen, self)
     self.add_car(car)
 
   def get_state(self, game):
-    [
-
-    ]
+    car = self.steerable_cars[0]
+    state = car.get_sensors_data()
 
     return np.array(state, dtype=int)
 
@@ -53,7 +52,7 @@ class DeepProgram(BaseProgram):
         final_move[move] = 1
     else:
         state0 = torch.tensor(state, dtype=torch.float)
-        prediction = self.model(state0)
+        prediction = self.car_steering_model(state0)
         move = torch.argmax(prediction).item()
         final_move[move] = 1
 

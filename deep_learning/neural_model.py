@@ -3,6 +3,10 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
+# https://github.com/ArchiMickey/QMario
+# https://github.com/Chrispresso/SuperMarioBros-AI
+# https://www.youtube.com/watch?v=WQ1bQAzBjPM
+# https://www.youtube.com/watch?v=cyNPj-VNNkQ
 class LinearQNet(nn.Module):
 
   def __init__(self, n_observations, n_actions):
@@ -27,20 +31,23 @@ class QTrainer:
     self.criterion = nn.MSELoss()
 
   def train_step(self, state, action, reward, next_state, done):
+      # torch.tensor changes tuple ([1.2, 3.1], [4.1, 5.1]) into an object tensor([[1.2000, 3.1000],[4.1000, 5.1000]])
+      # torch.tensor changes number 1.2 into an object tensor(1.200)
       state = torch.tensor(state, dtype=torch.float)
       next_state = torch.tensor(next_state, dtype=torch.float)
       action = torch.tensor(action, dtype=torch.long)
       reward = torch.tensor(reward, dtype=torch.float)
-      # (n, x)
-
+      # when sate hase one dimention (4,) or torch.Size([2])
       if len(state.shape) == 1:
           # (1, x)
+          #unsqueeze(state, 0) converts [1, 2, 3, 4] -> [[ 1,  2,  3,  4]]
+          # tensor(1.2000) -> tensor([1.2000])
           state = torch.unsqueeze(state, 0)
           next_state = torch.unsqueeze(next_state, 0)
           action = torch.unsqueeze(action, 0)
           reward = torch.unsqueeze(reward, 0)
           done = (done, )
-
+      # pred CAN STORE MULTIPLE RESULT FOR DIFFERENT STATES
       # 1: predicted Q values with current state
       pred = self.model(state)
 
