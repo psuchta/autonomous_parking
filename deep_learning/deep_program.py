@@ -1,8 +1,10 @@
 from base_program import BaseProgram
-from deep_learning.neural_model import LinearQNet, QTrainer
+from deep_learning.neural_model import QTrainer
 from cars.deep_controlled_car import DeepControlledCar
 from collections import deque
 import pygame
+import random
+import numpy as np
 from genetic.genetic_helper import GeneticHelper
 # from memory import ReplayMemory
 
@@ -16,7 +18,9 @@ class DeepProgram(BaseProgram):
     self.memory = deque(maxlen=MAX_MEMORY) # popleft()
     self.gamma = 0.9
     BaseProgram.__init__(self)
-    self.car_steering_model = self.steerable_cars[0].autonomous_steering_logic.neural_network
+    self.autonomous_car = self.steerable_cars[0]
+    self.car_steering_model = self.autonomous_car.autonomous_steering_logic.neural_network
+    self.car_steering_logic = self.autonomous_car.autonomous_steering_logic
     self.trainer = QTrainer(self.car_steering_model, lr=LR, gamma=self.gamma)
 
   def add_game_objects(self):
@@ -25,14 +29,36 @@ class DeepProgram(BaseProgram):
     car = DeepControlledCar(700, 430, self.screen, self)
     self.add_car(car)
 
-  def get_state(self, game):
-    car = self.steerable_cars[0]
-    state = car.get_sensors_data()
+  def remember(self, state_old, last_action, reward, state_new, is_done):
+    self.memory.append((state_old, last_action, reward, state_new, is_done)) # popleft if MAX_MEMORY is reached
 
-    return np.array(state, dtype=int)
+  def get_state(self):
+    state = self.autonomous_car.get_sensors_data()
+    return np.array(state, dtype=float)
 
-  def remember(self, state, action, reward, next_state, done):
-    self.memory.append((state, action, reward, next_state, done)) # popleft if MAX_MEMORY is reached
+  def play_step(self, n_games, delta_time):
+    self.draw_objects(delta_time)
+    self.draw_generation_num(n_games)
+    current_fitness = self.genetic_helper.fitness(self.autonomous_car, self.parking_slot)
+    delta_fintness = current_fitness - self.last_fitness
+    reward = 0
+    if delta_fintness < 0:
+      reward = -10
+    elif delta_fintness > 0:
+      reward = 10
+    # print(reward)
+    self.last_fitness = current_fitness
+    # Did car hit something
+    is_done = not self.autonomous_car.alive
+    return reward, is_done
+
+  def draw_generation_num(self, gen_num):
+    font = pygame.font.Font('freesansbold.ttf', 10)
+    text = font.render('Generation:' + str(gen_num), True, (255, 255, 255))
+    self.screen.blit(text, (20,10))
+
+  def train_short_memory(self, state_old, last_action, reward, state_new, is_done):
+    self.trainer.train_step(state_old, last_action, reward, state_new, is_done)
 
   def train_long_memory(self):
     if len(self.memory) > BATCH_SIZE:
@@ -43,48 +69,39 @@ class DeepProgram(BaseProgram):
     states, actions, rewards, next_states, dones = zip(*mini_sample)
     self.trainer.train_step(states, actions, rewards, next_states, dones)
 
-  def train_short_memory(self, state, action, reward, next_state, done):
-    self.trainer.train_step(state, action, reward, next_state, done)
+  def train(self, n_games, dt):
+    state_old = self.get_state()
+    reward, is_done = self.play_step(n_games, dt)
+    last_action = self.car_steering_logic.last_action
+    state_new = self.get_state()
 
-  def get_action(self, state):
-    # random moves: tradeoff exploration / exploitation
-    self.epsilon = 80 - self.n_games
-    final_move = [0,0,0]
-    if random.randint(0, 200) < self.epsilon:
-        move = random.randint(0, 2)
-        final_move[move] = 1
-    else:
-        state0 = torch.tensor(state, dtype=torch.float)
-        prediction = self.car_steering_model(state0)
-        move = torch.argmax(prediction).item()
-        final_move[move] = 1
-
-    return final_move
-
-  def play_step(self, game_num, delta_time):
-    self.draw_objects(delta_time)
-    self.draw_generation_num(game_num)
-    print(self.genetic_helper.fitness(self.steerable_cars[0], self.parking_slot))
-
-  def draw_generation_num(self, gen_num):
-    font = pygame.font.Font('freesansbold.ttf', 10)
-    text = font.render('Generation:' + str(gen_num), True, (255, 255, 255))
-    self.screen.blit(text, (20,10))
+    # train short memory
+    self.train_short_memory(state_old, last_action, reward, state_new, is_done)
+    self.remember(state_old, last_action, reward, state_new, is_done)
 
 
   def run(self):
+    n_games = 0
     while not self.exit:
+      self.car_steering_logic.set_n_games(n_games)
       start_time = pygame.time.get_ticks()
       time_passed = 0
-      while not self.exit and any(car.alive for car in self.steerable_cars) and time_passed <= 15000:
+      self.last_fitness = 0
+      while not self.exit and any(car.alive for car in self.steerable_cars) and time_passed <= 100000:
         dt = self.clock.get_time() / 1000
         for event in pygame.event.get():
           if event.type == pygame.QUIT:
             self.exit = True      
-        self.play_step(1, dt)
-        # self.genetic_helper.fitness(self.steerable_cars[0], self.parking_slot)
+        self.train(n_games, dt)
+        # self.genetic_helper.fitness(self.autonomous_car, self.parking_slot)
         pygame.display.flip()
         self.clock.tick(self.fps)
         time_passed = pygame.time.get_ticks() - start_time
+
+      # train long memory, plot result
+      self.train_long_memory()
+      print(len(self.memory))
+      
       [car.reset(700, 430) for car in self.steerable_cars]
+      n_games += 1
     pygame.quit()
