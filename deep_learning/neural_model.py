@@ -7,13 +7,15 @@ import torch.nn.functional as F
 # https://github.com/Chrispresso/SuperMarioBros-AI
 # https://www.youtube.com/watch?v=WQ1bQAzBjPM
 # https://www.youtube.com/watch?v=cyNPj-VNNkQ
+
+# https://www.youtube.com/watch?v=rFwQDDbYTm4
 class LinearQNet(nn.Module):
 
   def __init__(self, n_observations, n_actions):
       super().__init__()
-      self.layer1 = nn.Linear(n_observations, 10)
-      self.layer2 = nn.Linear(10, 10)
-      self.layer3 = nn.Linear(10, n_actions)
+      self.layer1 = nn.Linear(n_observations, 30)
+      self.layer2 = nn.Linear(30, 30)
+      self.layer3 = nn.Linear(30, n_actions)
 
   # Called with either one element to determine next action, or a batch
   # during optimization. Returns tensor([[left0exp,right0exp]...]).
@@ -28,7 +30,8 @@ class QTrainer:
     self.lr = lr
     self.gamma = gamma
     self.optimizer = optim.Adam(learning_model.parameters(), lr=lr)
-    self.criterion = nn.MSELoss()
+    # self.criterion = nn.MSELoss()
+    self.criterion = nn.SmoothL1Loss()
 
   def train_step(self, state, action, reward, next_state, done):
       # torch.tensor changes tuple ([1.2, 3.1], [4.1, 5.1]) into an object tensor([[1.2000, 3.1000],[4.1000, 5.1000]])

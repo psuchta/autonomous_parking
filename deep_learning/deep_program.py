@@ -11,17 +11,18 @@ from genetic.genetic_helper import GeneticHelper
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
+GAMMA = 0.99
+
 
 class DeepProgram(BaseProgram):
   def __init__(self):
     self.genetic_helper = GeneticHelper()
     self.memory = deque(maxlen=MAX_MEMORY) # popleft()
-    self.gamma = 0.9
     BaseProgram.__init__(self)
     self.autonomous_car = self.steerable_cars[0]
     self.car_steering_model = self.autonomous_car.autonomous_steering_logic.neural_network
     self.car_steering_logic = self.autonomous_car.autonomous_steering_logic
-    self.trainer = QTrainer(self.car_steering_model, lr=LR, gamma=self.gamma)
+    self.trainer = QTrainer(self.car_steering_model, lr=LR, gamma=GAMMA)
 
   def add_game_objects(self):
     car = None
@@ -36,20 +37,33 @@ class DeepProgram(BaseProgram):
     state = self.autonomous_car.get_sensors_data()
     return np.array(state, dtype=float)
 
+  # penalty for each step, if car is closer to parking spot the penalty is lower
+  def get_fitness(self, car, parking_spot):
+    distance_loss = car.distance_to_parking(parking_spot)
+    # fitness = 1/(distance_loss+1)
+    # car.fitness = fitness
+    return -distance_loss
+
   def play_step(self, n_games, delta_time):
+    self.car_steering_logic.set_games_and_steps(n_games, self.total_steps)
     self.draw_objects(delta_time)
     self.draw_generation_num(n_games)
-    current_fitness = self.genetic_helper.fitness(self.autonomous_car, self.parking_slot)
-    delta_fintness = current_fitness - self.last_fitness
-    reward = 0
-    if delta_fintness < 0:
-      reward = -10
-    elif delta_fintness > 0:
-      reward = 10
+    current_fitness = self.get_fitness(self.autonomous_car, self.parking_slot)
+    print(current_fitness)
+    delta_fintness = current_fitness - self.previous_fitness
+    reward = current_fitness
+    # if delta_fintness < 0:
+    #   reward = -2
+    # elif delta_fintness > 0:
+    #   reward = 1
     # print(reward)
-    self.last_fitness = current_fitness
+    self.previous_fitness = current_fitness
     # Did car hit something
     is_done = not self.autonomous_car.alive
+    if is_done:
+      reward = -100
+
+    self.total_steps += 1
     return reward, is_done
 
   def draw_generation_num(self, gen_num):
@@ -82,11 +96,11 @@ class DeepProgram(BaseProgram):
 
   def run(self):
     n_games = 0
+    self.total_steps = 0
     while not self.exit:
-      self.car_steering_logic.set_n_games(n_games)
       start_time = pygame.time.get_ticks()
       time_passed = 0
-      self.last_fitness = 0
+      self.previous_fitness = 0
       while not self.exit and any(car.alive for car in self.steerable_cars) and time_passed <= 100000:
         dt = self.clock.get_time() / 1000
         for event in pygame.event.get():
@@ -101,7 +115,7 @@ class DeepProgram(BaseProgram):
       # train long memory, plot result
       self.train_long_memory()
       print(len(self.memory))
-      
+
       [car.reset(700, 430) for car in self.steerable_cars]
       n_games += 1
     pygame.quit()
