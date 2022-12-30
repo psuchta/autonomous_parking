@@ -118,4 +118,7 @@ class DeepProgram(BaseProgram):
 
       [car.reset(700, 430) for car in self.steerable_cars]
       n_games += 1
+      # save neural model every 25 done games
+      if n_games % 25 == 0:
+        self.car_steering_model.save()
     pygame.quit()

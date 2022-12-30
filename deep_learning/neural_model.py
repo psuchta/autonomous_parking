@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
+import os
 
 # https://github.com/ArchiMickey/QMario
 # https://github.com/Chrispresso/SuperMarioBros-AI
@@ -26,6 +27,14 @@ class LinearQNet(nn.Module):
       x = F.relu(self.layer1(x))
       x = F.relu(self.layer2(x))
       return self.layer3(x)
+
+  def save(self, file_name='model.pth'):
+      model_folder_path = './neural_model'
+      if not os.path.exists(model_folder_path):
+          os.makedirs(model_folder_path)
+
+      file_name = os.path.join(model_folder_path, file_name)
+      torch.save(self.state_dict(), file_name)
 
 class QTrainer:
   def __init__(self, learning_model, lr, gamma):
