@@ -4,7 +4,7 @@ import torch
 import random
 import math
 
-EPS_START = 0.2
+EPS_START = 0.7
 EPS_END = 0.05
 EPS_DECAY = 500
 
@@ -19,7 +19,7 @@ class DeepSteeringLogic(SteeringInterface):
 
   def create_neural_network(self):
     # Possible actions - Up, Down, UpLeft, UpRight, DownLeft, DownRight
-    self.neural_network = LinearQNet(10, 6)
+    self.neural_network = LinearQNet(11, 6)
 
   def set_games_and_steps(self, n_games, total_steps):
     self.n_games = n_games
@@ -27,7 +27,7 @@ class DeepSteeringLogic(SteeringInterface):
 
   def get_steering_action(self, sensors_input):
     if self.random_action_count > 0:
-      if self.random_action_count == 30:
+      if self.random_action_count == 20:
         self.random_action_count = 0
       else:
         self.random_action_count += 1
@@ -37,7 +37,6 @@ class DeepSteeringLogic(SteeringInterface):
     sample = random.random()
     ex = math.exp(-1. * self.n_games / EPS_DECAY)
     eps_threshold = EPS_END + (EPS_START - EPS_END) * ex
-    # print(eps_threshold)
     if sample > eps_threshold:
       # print('Not random')
       state0 = torch.tensor(sensors_input, dtype=torch.float)

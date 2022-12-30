@@ -11,7 +11,7 @@ from genetic.genetic_helper import GeneticHelper
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
-GAMMA = 0.99
+GAMMA = 0.9
 
 
 class DeepProgram(BaseProgram):
@@ -29,6 +29,7 @@ class DeepProgram(BaseProgram):
     BaseProgram.add_game_objects(self)
     car = DeepControlledCar(700, 430, self.screen, self)
     self.add_car(car)
+    car.set_parking_spot(self.parking_slot)
 
   def remember(self, state_old, last_action, reward, state_new, is_done):
     self.memory.append((state_old, last_action, reward, state_new, is_done)) # popleft if MAX_MEMORY is reached
@@ -40,23 +41,23 @@ class DeepProgram(BaseProgram):
   # penalty for each step, if car is closer to parking spot the penalty is lower
   def get_fitness(self, car, parking_spot):
     distance_loss = car.distance_to_parking(parking_spot)
-    # fitness = 1/(distance_loss+1)
+    fitness = 1/(distance_loss+1)
     # car.fitness = fitness
-    return -distance_loss
+    return fitness
 
   def play_step(self, n_games, delta_time):
     self.car_steering_logic.set_games_and_steps(n_games, self.total_steps)
     self.draw_objects(delta_time)
     self.draw_generation_num(n_games)
     current_fitness = self.get_fitness(self.autonomous_car, self.parking_slot)
-    print(current_fitness)
+    # print(current_fitness)
     delta_fintness = current_fitness - self.previous_fitness
     reward = current_fitness
     # if delta_fintness < 0:
     #   reward = -2
     # elif delta_fintness > 0:
     #   reward = 1
-    # print(reward)
+    print(reward)
     self.previous_fitness = current_fitness
     # Did car hit something
     is_done = not self.autonomous_car.alive
@@ -114,7 +115,6 @@ class DeepProgram(BaseProgram):
 
       # train long memory, plot result
       self.train_long_memory()
-      print(len(self.memory))
 
       [car.reset(700, 430) for car in self.steerable_cars]
       n_games += 1

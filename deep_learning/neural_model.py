@@ -9,6 +9,9 @@ import torch.nn.functional as F
 # https://www.youtube.com/watch?v=cyNPj-VNNkQ
 
 # https://www.youtube.com/watch?v=rFwQDDbYTm4
+# https://iopscience.iop.org/article/10.1088/1742-6596/1883/1/012111/pdf
+# file:///Users/pawelsuchta/Downloads/Reinforcement_Learning-Based_Motion_Planning_for_A.pdf
+# https://www.mathworks.com/help/reinforcement-learning/ug/train-ppo-agent-for-automatic-parking-valet.html
 class LinearQNet(nn.Module):
 
   def __init__(self, n_observations, n_actions):
@@ -30,8 +33,8 @@ class QTrainer:
     self.lr = lr
     self.gamma = gamma
     self.optimizer = optim.Adam(learning_model.parameters(), lr=lr)
-    # self.criterion = nn.MSELoss()
-    self.criterion = nn.SmoothL1Loss()
+    self.criterion = nn.MSELoss()
+    # self.criterion = nn.SmoothL1Loss()
 
   def train_step(self, state, action, reward, next_state, done):
       # torch.tensor changes tuple ([1.2, 3.1], [4.1, 5.1]) into an object tensor([[1.2000, 3.1000],[4.1000, 5.1000]])
