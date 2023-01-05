@@ -16,25 +16,31 @@ import os
 class LinearQNet(nn.Module):
 
   def __init__(self, n_observations, n_actions):
-      super().__init__()
-      self.layer1 = nn.Linear(n_observations, 30)
-      self.layer2 = nn.Linear(30, 30)
-      self.layer3 = nn.Linear(30, n_actions)
+    super().__init__()
+    self.layer1 = nn.Linear(n_observations, 30)
+    self.layer2 = nn.Linear(30, 30)
+    self.layer3 = nn.Linear(30, n_actions)
 
   # Called with either one element to determine next action, or a batch
   # during optimization. Returns tensor([[left0exp,right0exp]...]).
   def forward(self, x):
-      x = F.relu(self.layer1(x))
-      x = F.relu(self.layer2(x))
-      return self.layer3(x)
+    x = F.relu(self.layer1(x))
+    x = F.relu(self.layer2(x))
+    return self.layer3(x)
 
   def save(self, file_name='model.pth'):
-      model_folder_path = './neural_model'
-      if not os.path.exists(model_folder_path):
-          os.makedirs(model_folder_path)
+    model_folder_path = './neural_model'
+    if not os.path.exists(model_folder_path):
+      os.makedirs(model_folder_path)
 
-      file_name = os.path.join(model_folder_path, file_name)
-      torch.save(self.state_dict(), file_name)
+    file_name = os.path.join(model_folder_path, file_name)
+    torch.save(self.state_dict(), file_name)
+
+  def load(self, file_name='model.pth'):
+    model_folder_path = './neural_model'
+    file_name = os.path.join(model_folder_path, file_name)
+    self.load_state_dict(torch.load(file_name))
+
 
 class QTrainer:
   def __init__(self, learning_model, lr, gamma):
@@ -42,8 +48,8 @@ class QTrainer:
     self.lr = lr
     self.gamma = gamma
     self.optimizer = optim.Adam(learning_model.parameters(), lr=lr)
-    self.criterion = nn.MSELoss()
-    # self.criterion = nn.SmoothL1Loss()
+    # self.criterion = nn.MSELoss()
+    self.criterion = nn.SmoothL1Loss()
 
   def train_step(self, state, action, reward, next_state, done):
       # torch.tensor changes tuple ([1.2, 3.1], [4.1, 5.1]) into an object tensor([[1.2000, 3.1000],[4.1000, 5.1000]])
@@ -82,3 +88,4 @@ class QTrainer:
       loss.backward()
 
       self.optimizer.step()
+      return loss.item()

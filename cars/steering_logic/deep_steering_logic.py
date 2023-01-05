@@ -20,18 +20,22 @@ class DeepSteeringLogic(SteeringInterface):
   def create_neural_network(self):
     # Possible actions - Up, Down, UpLeft, UpRight, DownLeft, DownRight
     self.neural_network = LinearQNet(11, 6)
+    # self.neural_network.load()
 
   def set_games_and_steps(self, n_games, total_steps):
     self.n_games = n_games
     self.total_steps = total_steps
 
   def get_steering_action(self, sensors_input):
+
     if self.random_action_count > 0:
-      if self.random_action_count == 20:
+      if self.random_action_count >= self.random_frames:
         self.random_action_count = 0
       else:
         self.random_action_count += 1
         return self.last_action
+    else:
+      self.random_frames = random.randint(20, 60)
 
     final_move = [0,0,0,0,0,0]
     sample = random.random()
