@@ -3,10 +3,10 @@ from gym import spaces
 import numpy as np
 from deep_learning.game import Game
 
-class GameEnv(gym.Env):
+class ParkingEnv(gym.Env):
 
   def __init__(self):
-    super(GameEnv, self).__init__()
+    super(ParkingEnv, self).__init__()
     self.game = Game()
     self.action_space = spaces.Discrete(7)
     self.observation_space = spaces.Box(low=-1, high=25,

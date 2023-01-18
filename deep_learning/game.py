@@ -48,16 +48,6 @@ class Game(BaseProgram):
     # car.fitness = fitness
     return -distance_loss
 
-  # NOT USED
-  def fitness(self, car, parking_spot):
-    distance_to_parking = car.distance_to_parking(parking_spot)
-    reward = 22 - distance_to_parking
-    # intersection_ratio = parking_spot.car_intersection_ratio(car.rect) * 100
-    # if intersection_ratio and (car.angle < 0):
-      # intersection_ratio += car.angle * 2
-    # reward += intersection_ratio
-    return reward
-
   def fitness_step(self, car, parking_spot):
     distance_to_parking = car.distance_to_parking(parking_spot)
     reward = 22 - distance_to_parking

@@ -1,5 +1,4 @@
 from cars.autonomous_controlled_car import AutonomousControlledCar
-from cars.steering_logic.deep_steering_logic import DeepSteeringLogic
 from cars.controlled_car import ControlledCar
 import math
 
@@ -18,8 +17,6 @@ class DeepControlledCar(AutonomousControlledCar):
       raise Exception("You have to set parking spot")
 
     inputs = [s['sensor'].actual_length for s in self.sensors]
-    # inputs.extend(self.parking_spot.rect.center)
-    # inputs.extend(self.rect.center)
     ditance = self.distance_between_points(self.parking_spot.rect.center, self.rect.center)
     inputs.append(ditance)
     return inputs
@@ -32,7 +29,6 @@ class DeepControlledCar(AutonomousControlledCar):
 
   # def get_steering_dict(self):
     # return ControlledCar.get_steering_dict(self)
-
 
   def map_steering(self, action):
     up = action == 0

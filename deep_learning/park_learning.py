@@ -1,5 +1,5 @@
 from stable_baselines3.common.env_checker import check_env
-from deep_learning.game_env import GameEnv
+from deep_learning.parking_env import ParkingEnv
 from stable_baselines3 import PPO, DQN, A2C
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from stable_baselines3.common.monitor import Monitor
@@ -10,7 +10,7 @@ import os
 
 class ParkLearning():
   def __init__(self):
-    self.env = GameEnv()
+    self.env = ParkingEnv()
 
   def simple_check(self):
     check_env(self.env)
@@ -30,16 +30,12 @@ class ParkLearning():
 
     model = PPO('MlpPolicy', env, verbose = 1, ent_coef=0.01, tensorboard_log=logdir)
 
-    model.learn(total_timesteps=5000)
+    model.learn(total_timesteps=1000)
     PPO_path = os.path.join('deep_learning', 'saved_models', 'PPO_model')
     model.save(PPO_path)
 
     # model.load(PPO_path)
-    # evaluate_policy(model, env, n_eval_episodes=10)
-    
     print('testing')
-
-    obs = env.reset()
     self.__testing_loop(model, env)
 
   def dqn_learning(self):
@@ -51,9 +47,9 @@ class ParkLearning():
     model.learn(total_timesteps=200000)
     PPO_path = os.path.join('deep_learning', 'saved_models', 'DQN_model')
     model.save(PPO_path)
-    # model.load(PPO_path)
 
-    obs = self.env.reset()
+    # model.load(PPO_path)
+    print('testing')
     self.__testing_loop(model, env)
 
   def a2c_learning(self):
@@ -66,7 +62,6 @@ class ParkLearning():
     model.save(PPO_path)
     
     # model.load(PPO_path)
-
     print('testing')
     self.__testing_loop(model, env)
 
@@ -84,11 +79,3 @@ class ParkLearning():
       obs, reward, done, info = env.step(action)
       if done:
         obs = env.reset()
-
-
-
-
-
-
-
-
