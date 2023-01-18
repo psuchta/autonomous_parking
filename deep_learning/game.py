@@ -1,6 +1,5 @@
 from base_program import BaseProgram
 from cars.deep_controlled_car import DeepControlledCar
-from collections import deque
 import pygame
 import random
 import numpy as np
@@ -15,23 +14,20 @@ class Game(BaseProgram):
     BaseProgram.__init__(self)
     self.autonomous_car = self.steerable_cars[0]
     self.n_games = 0
-    self.total_steps = 0
-    # self.car_steering_model = self.autonomous_car.autonomous_steering_logic.neural_network
-    # self.car_steering_logic = self.autonomous_car.autonomous_steering_logic
+    self.previous_reward = 0
 
   def reset(self):
     self.n_games += 1
     self.start_time = pygame.time.get_ticks()
-    self.time_passed = 0
     r_x = random.randint(300, 900)
     r_y = random.randint(380, 440)
-    [car.reset(r_x, r_y) for car in self.steerable_cars]
+    [car.reset(700, 430) for car in self.steerable_cars]
+    # [car.reset(400, 430) for car in self.steerable_cars]
 
     observation = self.get_state()
     observation = np.array(observation)
 
     return observation
-
 
   def add_game_objects(self):
     car = None
@@ -44,7 +40,7 @@ class Game(BaseProgram):
     state = self.autonomous_car.get_sensors_data()
     return np.array(state, dtype=float)
 
-  # penalty for each step, if car is closer to parking spot the penalty is lower
+  # NOT USED penalty for each step, if car is closer to parking spot the penalty is lower
   def get_fitness(self, car, parking_spot):
     distance_loss = car.distance_to_parking(parking_spot)/22
       
@@ -52,18 +48,38 @@ class Game(BaseProgram):
     # car.fitness = fitness
     return -distance_loss
 
+  # NOT USED
+  def fitness(self, car, parking_spot):
+    distance_to_parking = car.distance_to_parking(parking_spot)
+    reward = 22 - distance_to_parking
+    # intersection_ratio = parking_spot.car_intersection_ratio(car.rect) * 100
+    # if intersection_ratio and (car.angle < 0):
+      # intersection_ratio += car.angle * 2
+    # reward += intersection_ratio
+    return reward
+
+  def fitness_step(self, car, parking_spot):
+    distance_to_parking = car.distance_to_parking(parking_spot)
+    reward = 22 - distance_to_parking
+    return reward
+
   def play_step(self, delta_time):
     self.draw_objects(delta_time)
     self.draw_generation_num()
-    current_fitness = self.get_fitness(self.autonomous_car, self.parking_slot)
-    reward = current_fitness
+    # current_fitness = self.get_fitness(self.autonomous_car, self.parking_slot)
+    # reward = current_fitness
+    # reward = self.fitness(self.autonomous_car, self.parking_slot)
+    current_reward = self.fitness_step(self.autonomous_car, self.parking_slot)
+    reward = current_reward - self.previous_reward
+    intersection_ratio = self.parking_slot.car_intersection_ratio(self.autonomous_car.rect)
+    reward += intersection_ratio
 
+    self.previous_reward = current_reward
     # Did car hit something
-    is_done = (not self.autonomous_car.alive) or (self.exit) and (self.time_passed >= 10000)
+    is_done = (not self.autonomous_car.alive)
     if is_done:
-      reward = -100
-
-    self.total_steps += 1
+      self.previous_reward = 0
+      reward = -1
     return reward, is_done
 
   def draw_generation_num(self):
@@ -71,7 +87,8 @@ class Game(BaseProgram):
     text = font.render('Generation:' + str(self.n_games), True, (255, 255, 255))
     self.screen.blit(text, (20,10))
 
-  def step(self):
+  def step(self, action):
+    self.autonomous_car.set_next_action(action)
     dt = self.clock.get_time() / 1000
 
     for event in pygame.event.get():
@@ -84,7 +101,6 @@ class Game(BaseProgram):
 
     pygame.display.flip()
     self.clock.tick(self.fps)
-    self.time_passed = pygame.time.get_ticks() - self.start_time
 
     info = {}
     observation = np.array(observation)
@@ -94,11 +110,4 @@ class Game(BaseProgram):
     return self.exit
 
   def close(self):
-    pygame.quit()
-
-  def run(self):
-    while not self.exit:
-      self.reset()
-      while not self.exit and any(car.alive for car in self.steerable_cars) and self.time_passed <= 10000:   
-        self.step()
     pygame.quit()

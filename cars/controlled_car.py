@@ -46,45 +46,36 @@ class ControlledCar(Car):
     self.check_if_hit_something()
 
   def update_steer(self, dt, steering_dict):
-    loc_max_acceleration = self.max_acceleration
-
     if steering_dict['up']:
       if self.velocity.x < 0:
-        self.acceleration = loc_max_acceleration = self.brake_deceleration
+        self.acceleration  = self.brake_deceleration
       else:
-        self.acceleration += 1 * dt
+        self.acceleration = self.max_acceleration
     elif steering_dict['down']:
       if self.velocity.x > 0:
         self.acceleration =  -self.brake_deceleration
-        loc_max_acceleration = self.brake_deceleration
       else:
-        self.acceleration -= 1 * dt
-    elif steering_dict['brake']:
-      if abs(self.velocity.x) > dt * self.brake_deceleration:
-        self.acceleration = -copysign(self.brake_deceleration, self.velocity.x)
-      else:
-        self.acceleration = -self.velocity.x / dt
+        self.acceleration = -self.max_acceleration
     else:
       # For instant brake
-      # self.acceleration = 0
-      # self.velocity.x = 0
-      if abs(self.velocity.x) > dt * self.free_deceleration:
-        self.acceleration = -copysign(self.free_deceleration, self.velocity.x)
-      else:
-        if dt != 0:
-          self.acceleration = -self.velocity.x / dt
-    self.acceleration = max(-loc_max_acceleration, min(self.acceleration, loc_max_acceleration))
+      self.acceleration = 0
+      self.velocity.x = 0
+      # if dt != 0:
+        # self.acceleration = -self.velocity.x / dt
+    # self.acceleration = max(-self.brake_deceleration, min(self.acceleration, self.max_acceleration))
 
     if steering_dict['right']:
       if self.steering > 0:
         self.steering = 0
       else:
-        self.steering -= 30 * dt
+        # self.steering -= 30 * dt
+        self.steering -= 45
     elif steering_dict['left']:
       if self.steering < 0:
         self.steering = 0
       else:
-        self.steering += 30 * dt
+        # self.steering += 30 * dt
+        self.steering += 45
     else:
       self.steering = 0
     self.steering = max(-self.max_steering, min(self.steering, self.max_steering))
