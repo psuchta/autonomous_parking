@@ -27,6 +27,7 @@ class NeatProgram(GeneticProgram):
   def run_generation(self, genomes, config):
     self.set_genomes(genomes, config)
     [car.reset(700, 430) for car in self.steerable_cars]
+    # Call parent's class function
     GeneticProgram.run_generation(self, 1)
 
     self.genetic_helper.calculate_fitness_in_cars(self.steerable_cars, self.parking_slot)
@@ -49,7 +50,7 @@ class NeatProgram(GeneticProgram):
     p.add_reporter(stats)
     # p.add_reporter(neat.Checkpointer(5))
 
-    winner = p.run(self.run_generation, 10)
+    winner = p.run(self.run_generation, 100)
 
   def run(self):
     local_dir = os.path.dirname(__file__)

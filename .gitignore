@@ -3,3 +3,6 @@
 __pycache__/
 .DS_Store
 /genetic/last_population.csv
+/neural_model/
+/deep_learning/tensorboard_logs/
+/deep_learning/saved_models/
