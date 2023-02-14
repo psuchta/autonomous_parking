@@ -1,7 +1,7 @@
 import numpy as np
 import math
 
-class NeuralLevel:
+class NeuralLayer:
   def __init__(self, input_number, neuron_number, is_output=False):
     self.input_number = input_number
     self.neuron_number = neuron_number

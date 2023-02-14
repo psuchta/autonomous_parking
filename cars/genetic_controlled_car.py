@@ -1,7 +1,6 @@
 from cars.autonomous_controlled_car import AutonomousControlledCar
 from genetic.chromosome_helper import ChromosomeHelper
 from cars.steering_logic.genetic_steering_logic import GeneticSteeringLogic
-from genetic.neural_from_internet.autonomous_steering_logic2 import AutonomousSteeringLogic2
 import math
 
 class GeneticControlledCar(AutonomousControlledCar):

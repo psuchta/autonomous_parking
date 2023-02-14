@@ -1,4 +1,4 @@
-from genetic.neural_level import NeuralLevel
+from genetic.neural_layer import NeuralLayer
 
 class NeuralNetwork:
 
@@ -32,7 +32,7 @@ class NeuralNetwork:
     for level in self.levels:
       level.is_output = False
 
-    self.levels.append(NeuralLevel(input_number, neuron_number, is_output=True))
+    self.levels.append(NeuralLayer(input_number, neuron_number, is_output=True))
 
   def number_of_weights(self):
     weights_number = 0

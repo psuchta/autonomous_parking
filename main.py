@@ -6,12 +6,12 @@ from deep_learning.parking_env import ParkingEnv
 from deep_learning.park_learning import ParkLearning
 
 if __name__ == '__main__':
-  # program = GeneticProgram()
+  program = GeneticProgram()
   # program = NeatProgram()
-  # program.run()
+  program.run()
 
-  program = ParkLearning()
-  program.ppo_learning()
+  # program = ParkLearning()
+  # program.ppo_learning()
   # program.dqn_learning()
   # program.a2c_learning()
   # program.random_check()
