@@ -50,7 +50,7 @@ class NeatProgram(GeneticProgram):
     p.add_reporter(stats)
     # p.add_reporter(neat.Checkpointer(5))
 
-    winner = p.run(self.run_generation, 10)
+    winner = p.run(self.run_generation, 100)
 
   def run(self):
     local_dir = os.path.dirname(__file__)
