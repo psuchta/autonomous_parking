@@ -44,6 +44,7 @@ class Car(pygame.sprite.Sprite):
     distances.append(self.distance_between_points(pts[1], parking_spot.rect.topright))
     distances.append(self.distance_between_points(pts[2], parking_spot.rect.bottomright))
     average_distance = (sum(distances)/len(distances))/meter_scale
+    # TODO TUTAJ DAC SAMO sum(distances)
     return average_distance
 
   def old_distance_to_parking(self, parking_spot):
