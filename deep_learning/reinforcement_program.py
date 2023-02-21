@@ -9,7 +9,7 @@ BATCH_SIZE = 64
 LR = 0.00025
 GAMMA = 0.9
 
-class Game(BaseProgram):
+class ReinforcementProgram(BaseProgram):
   def __init__(self):
     BaseProgram.__init__(self)
     self.autonomous_car = self.steerable_cars[0]

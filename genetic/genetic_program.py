@@ -108,7 +108,9 @@ class GeneticProgram(BaseProgram):
         new_population = self.breed(self.steerable_cars)
       elif self.settings['breeding_method'] == 'segments':
         new_population = self.breed_with_segments(self.steerable_cars)
-      # self.genetic_helper.copy_best_to_population(new_population, best_fitness_car[1])
+
+      if self.settings['add_previous_best'] == True:
+        self.genetic_helper.copy_best_to_population(new_population, best_fitness_car[1])
       self.set_cars_chromosomes(new_population)
       [car.reset(700, 430) for car in self.steerable_cars]
     print("Best car in simulation")
