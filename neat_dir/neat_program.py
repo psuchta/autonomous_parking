@@ -25,6 +25,7 @@ class NeatProgram(GeneticProgram):
       self.steerable_cars[idx].set_chromosome(genome[1], config)
 
   def run_generation(self, genomes, config):
+    breakpoint()
     self.set_genomes(genomes, config)
     [car.reset(700, 430) for car in self.steerable_cars]
     # Call parent's class function

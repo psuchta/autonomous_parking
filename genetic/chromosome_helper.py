@@ -34,10 +34,12 @@ class ChromosomeHelper:
     return np.random.randint(2, size=self.bits_per_number).tolist()
 
   def init_int_number_randomly(self):
-    return np.random.randint(settings['int_number_range'][0], settings['int_number_range'][1])
+    # np.random.randint(settings['int_number_range'][0], settings['int_number_range'][1])
+    number = np.random.normal(settings['int_weight_init_mean'], settings['int_weight_init_stdev'])
+    return np.round(number)
 
   def init_float_number_randomly(self):
-    return np.random.uniform(low=settings['float_number_range'][0], high=settings['float_number_range'][1])
+    return np.random.normal(settings['float_weight_init_mean'], settings['float_weight_init_stdev'])
 
   def init_randomly(self, numbers_to_generate):
     chromosome = []
@@ -62,29 +64,29 @@ class ChromosomeHelper:
 
     if self.chromosome_type == 'int':
       mutated_number = original_number + self.random_int_mutation()
+      # print(f'original_number - {original_number}    mutated_number-{mutated_number}')
       return np.clip(mutated_number, settings['int_number_range'][0], settings['int_number_range'][1])
 
     elif self.chromosome_type == 'float':
       mutated_number = original_number + self.random_mutate_float()
+      # print(f'original_number - {original_number}    mutated_number-{mutated_number}')
       return np.clip(mutated_number, settings['float_number_range'][0], settings['float_number_range'][1])
 
   def random_int_mutation(self):
     if settings['mutation_method'] == 'default':
-      return np.random.randint(settings['int_number_range'][0], settings['int_number_range'][1])
+      return np.random.randint(settings['int_default_mutation_range'][0], settings['int_default_mutation_range'][1])
     elif settings['mutation_method'] == 'gaussian':
-      random = np.random.normal()
-      if settings['mutation_scale']:
-        random *= settings['mutation_scale']
-      return random
-
+      number = np.random.normal(settings['int_gaussian_mutation_mean'], settings['int_gaussian_mutation_stdev'])
+      random_number = np.round(number)
+      print(f'random mutate int {random_number}')
+      return random_number
 
   def random_mutate_float(self):
     if settings['mutation_method'] == 'default':
-      return np.random.uniform(low=settings['float_number_range'][0], high=settings['float_number_range'][1])
+      return np.random.uniform(low=settings['float_default_mutation_range'][0], high=settings['float_default_mutation_range'][1])
     elif settings['mutation_method'] == 'gaussian':
-      random = np.random.normal()
-      if settings['mutation_scale']:
-        random *= settings['mutation_scale']
-      return random
+      random_number = np.random.normal(settings['float_gaussian_mutation_mean'], settings['float_gaussian_mutation_stdev'])
+      # print(f'random mutate float {random_number}')
+      return random_number
 
 

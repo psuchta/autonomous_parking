@@ -55,7 +55,8 @@ class GeneticProgram(BaseProgram):
   def breed(self, population):
     selected_population = None
     if self.settings['selection_method'] == 'tournament':
-      tournament_size = self.genetic_helper.population_procentage(population, self.settings['tournament_procentage'])
+      # tournament_size = self.genetic_helper.population_procentage(population, self.settings['tournament_procentage'])
+      tournament_size = self.settings['tournament_size']
       selected_population = self.genetic_helper.tournament_selection(population, tournament_size)
     elif self.settings['selection_method'] == 'roulette':
       selected_population = self.genetic_helper.roulette_wheel_selection(population)
