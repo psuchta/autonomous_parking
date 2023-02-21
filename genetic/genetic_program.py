@@ -97,7 +97,7 @@ class GeneticProgram(BaseProgram):
     # best_fitness_car[0] - fitness_score
     # best_fitness_car[1] - chromosome of the best car
     best_fitness_car = (None, None)
-    generation_size = 2000
+    generation_size = 200000
     # self.laod_population_from_file()
     for g in range(generation_size):
       if self.exit: break

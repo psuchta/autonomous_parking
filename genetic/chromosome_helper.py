@@ -78,7 +78,7 @@ class ChromosomeHelper:
     elif settings['mutation_method'] == 'gaussian':
       number = np.random.normal(settings['int_gaussian_mutation_mean'], settings['int_gaussian_mutation_stdev'])
       random_number = np.round(number)
-      print(f'random mutate int {random_number}')
+      # print(f'random mutate int {random_number}')
       return random_number
 
   def random_mutate_float(self):

@@ -1,7 +1,7 @@
 settings = {
               ############ CHROMOSOME REPRESENTATION ############
   # 'binary','float', 'int'
-  'chromosome_representation':                        'int',
+  'chromosome_representation':                        'float',
   'chromosome_representation_options':                ['binary', 'float', 'int'],
   'binary_number_bits':                               7,
   'int_number_range':                                 [-30, 30],
@@ -22,7 +22,7 @@ settings = {
   # default, segments
   'breeding_method':                                  'default',
   # Copy the best chromosome from the previous population to the new population
-  'add_previous_best':                                False,
+  'add_previous_best':                                True,
 
                     ############ MUTATION ############
   'mutation_probability':                             0.01,
@@ -40,22 +40,18 @@ settings = {
   'float_default_mutation_range':                     [-0.20, 0.20],
 
   'float_gaussian_mutation_mean':                     0.0,
-  'float_gaussian_mutation_stdev':                    2,
-  
-  # scale at which guassian random number will be multiplayed by
-  # random number within range specified in 'int_mutation_range' or 'float_mutation_range' will be multiplied by 'mutation_scale'
-  'mutation_scale':                                   1,
+  'float_gaussian_mutation_stdev':                    0.6,
 
                     ############ SELECTION ############
   # roulette, tournament
   'selection_method':                                 'tournament',
   'tournament_procentage':                            0.001,
-  'tournament_size':                                  10,
+  'tournament_size':                                  15,
                     ############ POPULATION ############
   'population_size':                                  32,
                     ############ CROSSOVER  ############
   # single, multiple
   'crossover_method':                                 'single',
-  'crossover_probability':                            0.9,
+  'crossover_probability':                            0.8,
 
 }
