@@ -80,7 +80,7 @@ class Car(pygame.sprite.Sprite):
     self.move_itself(dt)
 
   def move_itself(self, dt = 0):
-    self.velocity += (self.acceleration * dt, 0)
+    self.velocity += (self.acceleration, 0)
     self.velocity.x = max(-self.max_velocity, min(self.velocity.x, self.max_velocity))
 
     if self.steering:
