@@ -20,5 +20,5 @@ class AutonomousControlledCar(ControlledCar):
 
   def get_steering_dict(self):
     sensors_input = [s['sensor'].actual_length_in_meter() for s in self.sensors]
-    # return self.autonomous_steering_logic.get_steering_dict(sensors_input)
-    return ControlledCar.get_steering_dict(self)
+    return self.autonomous_steering_logic.get_steering_dict(sensors_input)
+    # return ControlledCar.get_steering_dict(self)
