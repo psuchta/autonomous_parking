@@ -6,10 +6,16 @@ from genetic.genetic_program import GeneticProgram
 import pygame
 import os
 import neat
+import random
+import numpy
 
 class NeatProgram(GeneticProgram):
 
   def __init__(self):
+    seed = 1086
+    random.seed(seed)
+    numpy.random.seed(seed)
+
     BaseProgram.__init__(self)
     self.genetic_helper = GeneticHelper()
 
@@ -25,7 +31,6 @@ class NeatProgram(GeneticProgram):
       self.steerable_cars[idx].set_chromosome(genome[1], config)
 
   def run_generation(self, genomes, config):
-    breakpoint()
     self.set_genomes(genomes, config)
     [car.reset(700, 430) for car in self.steerable_cars]
     # Call parent's class function
@@ -51,7 +56,7 @@ class NeatProgram(GeneticProgram):
     p.add_reporter(stats)
     # p.add_reporter(neat.Checkpointer(5))
 
-    winner = p.run(self.run_generation, 100)
+    winner = p.run(self.run_generation, 1000)
 
   def run(self):
     local_dir = os.path.dirname(__file__)
