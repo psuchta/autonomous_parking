@@ -1,11 +1,13 @@
 settings = {
+  # To initialize same search space, use the same seed for random operations
+  'random_seed':                                      1086,
               ############ CHROMOSOME REPRESENTATION ############
   # 'binary','float', 'int'
   'chromosome_representation':                        'float',
   'chromosome_representation_options':                ['binary', 'float', 'int'],
-  'binary_number_bits':                               7,
+  'binary_number_bits':                               6,
   'int_number_range':                                 [-30, 30],
-  'float_number_range':                               [-15, 15],
+  'float_number_range':                               [-5, 5],
 
                     ############ NEURAL NETWORK ############
   # Range for initializing weights and biases
@@ -25,7 +27,7 @@ settings = {
   'add_previous_best':                                True,
 
                     ############ MUTATION ############
-  'mutation_probability':                             0.01,
+  'mutation_probability':                             0.15,
 
   # default, gaussian
   'mutation_method':                                  'gaussian',
@@ -46,12 +48,10 @@ settings = {
   # roulette, tournament
   'selection_method':                                 'tournament',
   'tournament_procentage':                            0.001,
-  'tournament_size':                                  15,
+  'tournament_size':                                  10,
                     ############ POPULATION ############
   'population_size':                                  32,
                     ############ CROSSOVER  ############
-  # single, multiple
-  'crossover_method':                                 'single',
   'crossover_probability':                            0.8,
 
 }

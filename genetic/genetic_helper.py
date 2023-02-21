@@ -40,13 +40,9 @@ class GeneticHelper:
     if len(parent1) != len(parent2):
       raise Exception("Lengths of passed arrays are not the same - Crossover")
     length = len(parent1)
-    if settings['crossover_method'] == 'single':
-      position = random.randint(2, length-2)
-      child1 = parent1[0:position] + parent2[position:length]
-      child2 = parent2[0:position] + parent1[position:length]
-    elif settings['crossover_method'] == 'multiple':
-      position1 = random.randint(2, length-2)
-      position2 = random.randint(2, length-2)
+    position = random.randint(2, length-2)
+    child1 = parent1[0:position] + parent2[position:length]
+    child2 = parent2[0:position] + parent1[position:length]
     return child1, child2
 
   def tournament_selection(self, car_population, tournament_size):

@@ -9,6 +9,11 @@ from genetic.settings import settings
 
 class GeneticProgram(BaseProgram):
   def __init__(self):
+    seed = settings['random_seed']
+    if seed:
+      random.seed(seed)
+      np.random.seed(seed)
+
     self.settings = settings
     self.genetic_helper = GeneticHelper()
     self.chromosome_helper = ChromosomeHelper()
