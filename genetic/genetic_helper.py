@@ -92,6 +92,8 @@ class GeneticHelper:
     distance_loss = car.distance_to_point(parking_spot.rect.center)
     distance_loss = car.distance_to_parking(parking_spot)
     fitness = 1/(distance_loss+1)
+    intersection_ratio = parking_spot.car_intersection_ratio(car.rect)
+    fitness += intersection_ratio
     if not car.alive:
       fitness -= 0.1
 

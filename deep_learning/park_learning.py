@@ -30,7 +30,7 @@ class ParkLearning():
 
     model = PPO('MlpPolicy', env, verbose = 1, ent_coef=0.01, tensorboard_log=logdir)
 
-    model.learn(total_timesteps=50000)
+    model.learn(total_timesteps=100000)
     PPO_path = os.path.join('deep_learning', 'saved_models', 'PPO_model')
     model.save(PPO_path)
 

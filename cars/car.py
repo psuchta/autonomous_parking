@@ -60,7 +60,7 @@ class Car(pygame.sprite.Sprite):
   def get_all_sprites(self):
     return []
 
-  def init_moving(self, x, y, angle=0.0, length=2, max_steering=45, max_acceleration=10):
+  def init_moving(self, x, y, angle=0.0, length=2, max_steering=45, max_acceleration=2):
     self.position = pygame.Vector2(x, y)
     self.velocity = pygame.Vector2(0.0, 0.0)
     self.angle = angle
@@ -73,7 +73,6 @@ class Car(pygame.sprite.Sprite):
     self.acceleration = 0.0
     self.steering = 0.0
     self.free_deceleration = 10
-    # self.max_velocity = 0.2
     self.max_velocity = 2.5
     self.brake_deceleration = 15
 
@@ -81,7 +80,6 @@ class Car(pygame.sprite.Sprite):
     self.move_itself(dt)
 
   def move_itself(self, dt = 0):
-    # self.velocity += (self.acceleration * dt, 0)
     self.velocity += (self.acceleration, 0)
     self.velocity.x = max(-self.max_velocity, min(self.velocity.x, self.max_velocity))
 

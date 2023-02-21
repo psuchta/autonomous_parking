@@ -9,6 +9,11 @@ from genetic.settings import settings
 
 class GeneticProgram(BaseProgram):
   def __init__(self):
+    seed = settings['random_seed']
+    if seed:
+      random.seed(seed)
+      np.random.seed(seed)
+
     self.settings = settings
     self.genetic_helper = GeneticHelper()
     self.chromosome_helper = ChromosomeHelper()
@@ -55,7 +60,8 @@ class GeneticProgram(BaseProgram):
   def breed(self, population):
     selected_population = None
     if self.settings['selection_method'] == 'tournament':
-      tournament_size = self.genetic_helper.population_procentage(population, self.settings['tournament_procentage'])
+      # tournament_size = self.genetic_helper.population_procentage(population, self.settings['tournament_procentage'])
+      tournament_size = self.settings['tournament_size']
       selected_population = self.genetic_helper.tournament_selection(population, tournament_size)
     elif self.settings['selection_method'] == 'roulette':
       selected_population = self.genetic_helper.roulette_wheel_selection(population)
@@ -96,7 +102,7 @@ class GeneticProgram(BaseProgram):
     # best_fitness_car[0] - fitness_score
     # best_fitness_car[1] - chromosome of the best car
     best_fitness_car = (None, None)
-    generation_size = 2000
+    generation_size = 200000
     # self.laod_population_from_file()
     for g in range(generation_size):
       if self.exit: break

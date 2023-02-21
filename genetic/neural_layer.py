@@ -45,6 +45,9 @@ class NeuralLayer:
   def relu(self, x):
     return np.maximum(0, x)
 
+  def tanh(self, x):
+    return math.tanh(x)
+
   def convert_to_movment_signal(self, sigmoid_value, margin = 0.4):
     if sigmoid_value > (0.9):
       return 1
