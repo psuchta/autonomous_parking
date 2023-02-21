@@ -9,6 +9,10 @@ class GeneticControlledCar(AutonomousControlledCar):
     self.set_steering_logic(GeneticSteeringLogic())
     self.chromosome_helper = ChromosomeHelper()
 
+  def init_constants(self):
+    AutonomousControlledCar.init_constants(self)
+    self.max_velocity = 1.7
+
   def set_chromosome(self, chromosome):
     AutonomousControlledCar.set_chromosome(self, chromosome)
     weights = self.chromosome_helper.genome_to_decimals(self.chromosome)
