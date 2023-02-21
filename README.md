@@ -5,7 +5,7 @@ The aim of the project is to create three different models for autonomous parkin
 
 * Genetic algorithm
 * NEAT algorithm
-* Deep learning
+* Reinforcement learning - PPO 
 * Fuzzy sets [In the future]
 
 Run the program
