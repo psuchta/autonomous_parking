@@ -6,3 +6,5 @@ __pycache__/
 /neural_model/
 /deep_learning/tensorboard_logs/
 /deep_learning/saved_models/
+/neat_dir/plots/
+/genetic/plots/
