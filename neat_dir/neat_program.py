@@ -8,6 +8,7 @@ import os
 import neat
 import random
 import numpy
+import visualize
 
 class NeatProgram(GeneticProgram):
 
@@ -18,6 +19,10 @@ class NeatProgram(GeneticProgram):
 
     BaseProgram.__init__(self)
     self.genetic_helper = GeneticHelper()
+
+    self.history_file_path="neat_dir/plots/plot_history.csv"
+    self.gen_num = 1
+    self.history_df = []
 
   def add_game_objects(self):
     car = None
@@ -34,12 +39,20 @@ class NeatProgram(GeneticProgram):
     self.set_genomes(genomes, config)
     [car.reset(700, 430) for car in self.steerable_cars]
     # Call parent's class function
-    GeneticProgram.run_generation(self, 1)
+    GeneticProgram.run_generation(self, self.gen_num)
 
     self.genetic_helper.calculate_fitness_in_cars(self.steerable_cars, self.parking_slot)
+    
+    self.gen_num += 1
+    self.add_generation_to_history(self.gen_num, self.steerable_cars)
 
-    for car in self.steerable_cars:
+    # Copy car's fitnes to NEAT genome 
+    self.set_fitness_to_NEAT_genome(self.steerable_cars)
+
+  def set_fitness_to_NEAT_genome(self, car_population):
+    for car in car_population:
       car.chromosome.fitness = car.fitness
+
 
   def run_neat(self, config_file):
     # Load configuration.
@@ -54,9 +67,15 @@ class NeatProgram(GeneticProgram):
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
-    # p.add_reporter(neat.Checkpointer(5))
 
-    winner = p.run(self.run_generation, 1000)
+    winner = p.run(self.run_generation, 200)
+
+    # Draw own statistics
+    self.draw_history_plot()
+
+    # Neat statistics
+    # visualize.plot_stats(stats, ylog=False, view=False, filename="fitness.svg")
+    # visualize.draw_net(config, winner, True)
 
   def run(self):
     local_dir = os.path.dirname(__file__)

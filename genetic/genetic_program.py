@@ -6,6 +6,8 @@ import numpy as np
 import pygame
 import random
 from genetic.settings import settings
+import pandas as pd
+import matplotlib.pyplot as plt
 
 class GeneticProgram(BaseProgram):
   def __init__(self):
@@ -14,6 +16,9 @@ class GeneticProgram(BaseProgram):
       random.seed(seed)
       np.random.seed(seed)
 
+    # Array for store program results
+    self.history_df = []
+    self.history_file_path="genetic/plots/plot_history.csv"
     self.settings = settings
     self.genetic_helper = GeneticHelper()
     self.chromosome_helper = ChromosomeHelper()
@@ -98,6 +103,26 @@ class GeneticProgram(BaseProgram):
     data = np.loadtxt(f'genetic/{file_name}.csv', dtype='int', delimiter=',')
     self.set_cars_chromosomes(data.tolist())
 
+  def add_generation_to_history(self, gen_num, population):
+    population_fitness = [c.fitness for c in population]
+    best_in_generation = self.genetic_helper.best_fitness_car(population).fitness
+
+    mean_population = np.mean(population_fitness)
+    # Sort fitness in ascending order
+    population_fitness.sort(reverse=True)
+    top_10_mean = np.mean(population_fitness[:10])
+
+    self.history_df.append([gen_num, best_in_generation, mean_population, top_10_mean])
+
+  def draw_history_plot(self):
+    df = pd.DataFrame(self.history_df, columns =['Generation', 'Best fitness', 'Population fitnes mean', 'Top10 fitnes mean'])
+    # Save history to csv file
+    df.to_csv(self.history_file_path)
+    # Draw plot
+    diagram = df.plot(x="Generation", y=["Best fitness", "Population fitnes mean", "Top10 fitnes mean"], ylabel="Fitness")
+    plt.show()
+
+
   def run(self):
     # best_fitness_car[0] - fitness_score
     # best_fitness_car[1] - chromosome of the best car
@@ -117,8 +142,12 @@ class GeneticProgram(BaseProgram):
 
       if self.settings['add_previous_best'] == True:
         self.genetic_helper.copy_best_to_population(new_population, best_fitness_car[1])
+
+      self.add_generation_to_history(g+1, self.steerable_cars)
+
       self.set_cars_chromosomes(new_population)
       [car.reset(700, 430) for car in self.steerable_cars]
+    self.draw_history_plot()
     print("Best car in simulation")
     print(best_fitness_car[0])
     print(best_fitness_car[1])
