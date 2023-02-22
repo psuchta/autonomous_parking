@@ -24,7 +24,7 @@ settings = {
   # default, segments
   'breeding_method':                                  'default',
   # Copy the best chromosome from the previous population to the new population
-  'add_previous_best':                                True,
+  'add_previous_best':                                False,
 
                     ############ MUTATION ############
   'mutation_probability':                             0.15,

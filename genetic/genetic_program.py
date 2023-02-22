@@ -18,11 +18,29 @@ class GeneticProgram(BaseProgram):
 
     # Array for store program results
     self.history_df = []
-    self.history_file_path="genetic/plots/plot_history.csv"
+    self.history_file_path="genetic/plots/" + self.plot_name_from_settings()
     self.settings = settings
     self.genetic_helper = GeneticHelper()
     self.chromosome_helper = ChromosomeHelper()
     BaseProgram.__init__(self)
+
+  def plot_name_from_settings(self):
+    settings_attrs = [
+      'random_seed',
+      'chromosome_representation',
+      'add_previous_best',
+      'mutation_probability' ,
+      'float_gaussian_mutation_stdev',
+      'selection_method',
+      'tournament_size',
+      'population_size',
+      'crossover_probability'
+      ]
+    name = "genetic"
+    for atr in settings_attrs:
+      name += f'_{settings[atr]}'
+    name += '.csv'
+    return name
 
   def set_cars_chromosomes(self, chromosome_array):
     if len(self.steerable_cars) != len(chromosome_array):
@@ -115,11 +133,11 @@ class GeneticProgram(BaseProgram):
     self.history_df.append([gen_num, best_in_generation, mean_population, top_10_mean])
 
   def draw_history_plot(self):
-    df = pd.DataFrame(self.history_df, columns =['Generation', 'Best fitness', 'Population fitnes mean', 'Top10 fitnes mean'])
+    df = pd.DataFrame(self.history_df, columns =['Generation', 'Best fitness', 'Population fitness mean', 'Top10 fitness mean'])
     # Save history to csv file
     df.to_csv(self.history_file_path)
     # Draw plot
-    diagram = df.plot(x="Generation", y=["Best fitness", "Population fitnes mean", "Top10 fitnes mean"], ylabel="Fitness")
+    diagram = df.plot(x="Generation", y=["Best fitness", "Population fitness mean", "Top10 fitness mean"], ylabel="Fitness")
     plt.show()
 
 
@@ -127,7 +145,7 @@ class GeneticProgram(BaseProgram):
     # best_fitness_car[0] - fitness_score
     # best_fitness_car[1] - chromosome of the best car
     best_fitness_car = (None, None)
-    generation_size = 200000
+    generation_size = 300
     # self.laod_population_from_file()
     for g in range(generation_size):
       if self.exit: break
