@@ -11,7 +11,7 @@ def draw_one_plot(source):
   plt.axhline(y = 1.3, color = 'r', linestyle = '--'),
   # Fitness value above 1.7 means the car parked ideally
   plt.axhline(y = 1.7, color = 'b', linestyle = '--')
-  plt.legend(["Best", "Population mean", "Top10 mean", "Parked well", "Pearked perfectly"], prop={'size': 8})
+  plt.legend(["Best", "Population mean", "Top10 mean", "Parked well", "Parked perfectly"], prop={'size': 8})
   plt.show()
 
 def draw_multiple(sources, labels):
@@ -31,8 +31,8 @@ def draw_multiple(sources, labels):
   # Fitness value above 1.7 means the car parked ideally
   plt.axhline(y = 1.7, color = 'b', linestyle = '--')
 
-  # plt.legend(labels + ["Parked well", "Pearked perfectly"], prop={'size': 8}, loc='lower right')
-  plt.legend(labels + ["Parked well", "Pearked perfectly"], prop={'size': 8})
+  # plt.legend(labels + ["Parked well", "Parked perfectly"], prop={'size': 8}, loc='lower right')
+  plt.legend(labels + ["Parked well", "Parked perfectly"], prop={'size': 8})
   plt.show()
 
 # Put here paths to csv files
