@@ -1,5 +1,6 @@
 settings = {
   # To initialize same search space, use the same seed for random operations
+  # 1086, 4252
   'random_seed':                                      1086,
               ############ CHROMOSOME REPRESENTATION ############
   # 'binary','float', 'int'
