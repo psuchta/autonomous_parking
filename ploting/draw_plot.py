@@ -7,6 +7,11 @@ def draw_one_plot(source):
   df = pd.read_csv(source)
 
   diagram = df.plot(x="Generation", y=["Best fitness", "Population fitness mean", "Top10 fitness mean"], ylabel="Fitness")
+  # 1.3 fitness value indicates that the car parked in the specified space imprecisely(but good enough)
+  plt.axhline(y = 1.3, color = 'r', linestyle = '--'),
+  # Fitness value above 1.7 means the car parked ideally
+  plt.axhline(y = 1.7, color = 'b', linestyle = '--')
+  plt.legend(["Best", "Population mean", "Top10 mean", "Parked well", "Pearked perfectly"], prop={'size': 8})
   plt.show()
 
 def draw_multiple(sources, labels):
@@ -21,21 +26,25 @@ def draw_multiple(sources, labels):
 
   diagram = merged_df.plot(x="Generation", ylabel="Fitness")
 
-  # plt.legend(labels,loc='lower right')
-  plt.legend(labels)
-  plt.show()
+  # 1.3 fitness value indicates that the car parked in the specified space imprecisely(but good enough)
+  plt.axhline(y = 1.3, color = 'r', linestyle = '--')
+  # Fitness value above 1.7 means the car parked ideally
+  plt.axhline(y = 1.7, color = 'b', linestyle = '--')
 
+  # plt.legend(labels + ["Parked well", "Pearked perfectly"], prop={'size': 8}, loc='lower right')
+  plt.legend(labels + ["Parked well", "Pearked perfectly"], prop={'size': 8})
+  plt.show()
 
 # Put here paths to csv files
 sources=[
   'path1',
-  'path2',
+  'path2'
 ]
 
 # Labels for each csv file
 labels = [
   "Label for path1",
-  "Label for path2",
+  "Label for path2"
 ]
 
 # draw_one_plot('path')
