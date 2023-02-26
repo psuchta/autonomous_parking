@@ -29,8 +29,9 @@ class ParkLearning():
     env = self.__normalized_env()
 
     model = PPO('MlpPolicy', env, verbose = 1, ent_coef=0.01, tensorboard_log=logdir)
+    # model = PPO('MlpPolicy', env, verbose = 1, tensorboard_log=logdir)
 
-    model.learn(total_timesteps=100000)
+    model.learn(total_timesteps=500000)
     PPO_path = os.path.join('deep_learning', 'saved_models', 'PPO_model')
     model.save(PPO_path)
 
@@ -66,10 +67,10 @@ class ParkLearning():
     self.__testing_loop(model, env)
 
   def __normalized_env(self):
-    env = TimeLimit(self.env, max_episode_steps=1000)
-    env = Monitor(env)
+    env = TimeLimit(self.env, max_episode_steps=1500)
+    # env = Monitor(env)
     env = DummyVecEnv([lambda: env])
-    env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=10.)
+    env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=23., clip_reward=3.0)
     return env
 
   def __testing_loop(self, model, env):
