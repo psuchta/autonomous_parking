@@ -63,13 +63,13 @@ class ReinforcementProgram(BaseProgram):
     reward = current_reward - self.previous_reward
     intersection_ratio = self.parking_slot.car_intersection_ratio(self.autonomous_car.rect)
     reward += intersection_ratio
-
+    print(reward)
     self.previous_reward = current_reward
     # Did car hit something
     is_done = (not self.autonomous_car.alive)
     if is_done:
       self.previous_reward = 0
-      reward = -1
+      reward = -100
     return reward, is_done
 
   def draw_generation_num(self):
