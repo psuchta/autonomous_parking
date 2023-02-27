@@ -12,7 +12,7 @@ class DeepControlledCar(AutonomousControlledCar):
 
   def init_constants(self):
     AutonomousControlledCar.init_constants(self)
-    self.max_velocity = 1.7
+    # self.max_velocity = 1.7
 
   def set_parking_spot(self, parking_spot):
     self.parking_spot = parking_spot
@@ -23,8 +23,9 @@ class DeepControlledCar(AutonomousControlledCar):
       raise Exception("You have to set parking spot")
 
     inputs = [s['sensor'].actual_length/meter_scale for s in self.sensors]
-    ditance = self.distance_between_points(self.parking_spot.rect.center, self.rect.center)/meter_scale
+    ditance = self.distance_to_parking(self.parking_spot)
     inputs.append(ditance)
+    # inputs.append(self.angle % 360)
     return inputs
 
   def set_next_action(self, action):
@@ -34,17 +35,19 @@ class DeepControlledCar(AutonomousControlledCar):
     return self.map_steering(self.next_action)
 
   # def get_steering_dict(self):
-  #   return ControlledCar.get_steering_dict(self)
+    # return ControlledCar.get_steering_dict(self)
 
   def distance_to_parking(self, parking_spot):
     distances = []
     pivot = self.rect.center
     rect = self.original.get_rect(center = pivot)
 
-    pts = [rect.midleft]
+    pts = [rect.center]
+    # pts = [rect.bottomleft]
     pts = [(pygame.math.Vector2(p) - pivot).rotate(-self.angle) + pivot for p in pts]
-
-    distances.append(self.distance_between_points(pts[0], parking_spot.rect.midbottom))
+    parking_point = (parking_spot.rect.midright[0]-40, parking_spot.rect.midright[1])
+    
+    distances.append(self.distance_between_points(pts[0], parking_spot.rect.center))
     distance = distances[0]/meter_scale
     # TODO TUTAJ DAC SAMO sum(distances)
     return distance
