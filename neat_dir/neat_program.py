@@ -24,20 +24,30 @@ class NeatProgram(GeneticProgram):
     self.gen_num = 1
     self.history_df = []
 
+  def clear_cars(self):
+    print(f'group before kill - {self.cars}')
+    for c in self.steerable_cars:
+      c.kill()
+    # map(lambda c: c.delete(), self.steerable_cars)
+    print(f'group after kill - {self.cars}')
+    self.steerable_cars = []
+
+  def create_cars_from_genomes(self, genomes):
+    for _g in genomes:
+      car = NeatControlledCar(700, 430, self.screen, self)
+      self.add_car(car)
+
   def add_game_objects(self):
     car = None
     BaseProgram.add_game_objects(self)
-    for idx in range(30):
-      car = NeatControlledCar(700, 430, self.screen, self)
-      self.add_car(car)
 
   def set_genomes(self, genomes, config):
     for idx, genome in enumerate(genomes):
       self.steerable_cars[idx].set_chromosome(genome[1], config)
 
   def run_generation(self, genomes, config):
+    self.create_cars_from_genomes(genomes)
     self.set_genomes(genomes, config)
-    [car.reset(700, 430) for car in self.steerable_cars]
     # Call parent's class function
     GeneticProgram.run_generation(self, self.gen_num)
 
@@ -48,7 +58,7 @@ class NeatProgram(GeneticProgram):
 
     # Copy car's fitnes to NEAT genome 
     self.set_fitness_to_NEAT_genome(self.steerable_cars)
-
+    self.clear_cars()
   def set_fitness_to_NEAT_genome(self, car_population):
     for car in car_population:
       car.chromosome.fitness = car.fitness
