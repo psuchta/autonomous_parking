@@ -15,15 +15,18 @@ class ReinforcementProgram(BaseProgram):
     self.autonomous_car = self.steerable_cars[0]
     self.n_games = 0
     self.previous_reward = 0
+    self.fps = 30
+    self.best_intersection_ratio = 0
 
   def reset(self):
     self.n_games += 1
-    self.start_time = pygame.time.get_ticks()
     r_x = random.randint(300, 900)
     r_y = random.randint(380, 440)
     [car.reset(700, 430) for car in self.steerable_cars]
     # [car.reset(400, 430) for car in self.steerable_cars]
-
+    # Change in future
+    self.previous_reward = 10.394337319652962
+    self.best_intersection_ratio = 0
     observation = self.get_state()
     observation = np.array(observation)
 
@@ -62,8 +65,15 @@ class ReinforcementProgram(BaseProgram):
     current_reward = self.fitness_step(self.autonomous_car, self.parking_slot)
     reward = current_reward - self.previous_reward
     intersection_ratio = self.parking_slot.car_intersection_ratio(self.autonomous_car.rect)
-    reward += intersection_ratio
-    print(reward)
+
+    if intersection_ratio > self.best_intersection_ratio:
+      reward = 1
+      self.best_intersection_ratio = intersection_ratio
+
+    #  Prevent car for park perpendicularly  
+    # if (intersection_ratio > 0) and ((self.autonomous_car.angle % 360) > 70):
+    #   reward = -1
+    # print(reward)
     self.previous_reward = current_reward
     # Did car hit something
     is_done = (not self.autonomous_car.alive)
@@ -79,8 +89,8 @@ class ReinforcementProgram(BaseProgram):
 
   def step(self, action):
     self.autonomous_car.set_next_action(action)
-    dt = self.clock.get_time() / 1000
-
+    # dt = self.clock.get_time() / 1000
+    dt = 0.033
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         self.exit = True
