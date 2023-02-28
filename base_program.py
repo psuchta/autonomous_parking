@@ -60,7 +60,6 @@ class BaseProgram:
     else:
       self.steerable_cars.append(car)
     self.cars.add(car)
-    self.world_sprites.add(car)
 
   def update_cars(self, cars, dt):
     for car in cars:
