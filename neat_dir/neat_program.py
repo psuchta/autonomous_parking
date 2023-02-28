@@ -25,11 +25,8 @@ class NeatProgram(GeneticProgram):
     self.history_df = []
 
   def clear_cars(self):
-    print(f'group before kill - {self.cars}')
     for c in self.steerable_cars:
       c.kill()
-    # map(lambda c: c.delete(), self.steerable_cars)
-    print(f'group after kill - {self.cars}')
     self.steerable_cars = []
 
   def create_cars_from_genomes(self, genomes):
