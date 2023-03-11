@@ -3,6 +3,18 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
+def draw_ppo(source):
+  df = pd.read_csv(source)
+  diagram = df.plot(
+    x="Step",
+    y="Value",
+    ylabel="Reward",
+    xlabel="Step"
+  )
+  plt.legend(["Mean episodic reward"])
+  plt.show()
+
+
 def draw_one_plot(source, colors=None):
   df = pd.read_csv(source)
 
