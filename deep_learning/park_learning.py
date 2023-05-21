@@ -24,6 +24,17 @@ class ParkLearning():
         obs, reward, done, info = self.env.step(action)
     self.env.close()
 
+  def obs_check(self):
+    env = self.env
+    obs = env.reset()
+    done = False
+    while not done:
+      obs, reward, done, info = env.step([2])
+      print(reward)
+      print('*******')
+      print(obs)
+    env.close()
+
   def ppo_learning(self):
     logdir = f"deep_learning/tensorboard_logs/ppo_learning"
     env = self.__normalized_env()
@@ -70,8 +81,7 @@ class ParkLearning():
     env = TimeLimit(self.env, max_episode_steps=700)
     env = Monitor(env)
     env = DummyVecEnv([lambda: env])
-    # env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=23., clip_reward=3.0)
-    env = VecNormalize(env)
+    env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=1., clip_reward=3.0)
     return env
 
   def __testing_loop(self, model, env):
