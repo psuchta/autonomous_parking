@@ -5,6 +5,7 @@ from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.evaluation import evaluate_policy
 from gym.wrappers import TimeLimit
+from datetime import datetime
 import os
 
 
@@ -40,15 +41,20 @@ class ParkLearning():
     env = self.__normalized_env()
 
     model = PPO('MlpPolicy', env, verbose = 1, ent_coef=0.02, tensorboard_log=logdir)
-    # model = PPO('MlpPolicy', env, verbose = 1,learning_rate=0.0001, tensorboard_log=logdir)
 
-    model.learn(total_timesteps=1000000)
-    PPO_path = os.path.join('deep_learning', 'saved_models', 'PPO_model')
+    model.learn(total_timesteps=200000)
+    PPO_path = os.path.join('deep_learning', 'saved_models', 'PPO_model '+ datetime.now().strftime("%Y_%m_%d_%H_%M"))
     model.save(PPO_path)
 
-    # model.load(PPO_path)
     print('testing')
     self.__testing_loop(model, env)
+
+  def ppo_from_file(self):
+    env = self.__normalized_env()
+    PPO_path = os.path.join('deep_learning', 'saved_models', 'PPO_model 2023_05_21_20_15.zip')
+
+    model = PPO.load(PPO_path, env=env)
+    self.__testing_loop(model, model.get_env())
 
   def dqn_learning(self):
     logdir = f"deep_learning/tensorboard_logs/dqn_learning"
@@ -78,10 +84,10 @@ class ParkLearning():
     self.__testing_loop(model, env)
 
   def __normalized_env(self):
-    env = TimeLimit(self.env, max_episode_steps=700)
-    env = Monitor(env)
+    env = Monitor(self.env)
+    env = TimeLimit(env, max_episode_steps=600)
     env = DummyVecEnv([lambda: env])
-    env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=1., clip_reward=3.0)
+    # env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=1., clip_reward=3.0)
     return env
 
   def __testing_loop(self, model, env):
