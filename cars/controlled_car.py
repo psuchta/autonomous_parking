@@ -99,7 +99,7 @@ class ControlledCar(Car):
     shift_position = {'angle': 140, 'length': 45}
     self.sensors.append({'sensor': s, 'shift_position': shift_position})
 
-    # Rear right
+    # Rear down left
     s = Sensor(self.game, self.screen, 135)
     shift_position = {'angle': 160, 'length': 66}
     self.sensors.append({'sensor': s, 'shift_position': shift_position})
@@ -107,7 +107,7 @@ class ControlledCar(Car):
     s = Sensor(self.game, self.screen, 180)
     shift_position = {'angle': 180, 'length': 66}
     self.sensors.append({'sensor': s, 'shift_position': shift_position})
-    # Rear right
+    # Rear down right
     s = Sensor(self.game, self.screen, 225)
     shift_position = {'angle': 200, 'length': 66}
     self.sensors.append({'sensor': s, 'shift_position': shift_position})
@@ -122,7 +122,7 @@ class ControlledCar(Car):
     self.sensors.append({'sensor': s, 'shift_position': shift_position})
 
 
-    # Front right
+    # Front up left
     s = Sensor(self.game, self.screen, 45)
     shift_position = {'angle': 20, 'length': 63}
     self.sensors.append({'sensor': s, 'shift_position': shift_position})
@@ -130,7 +130,7 @@ class ControlledCar(Car):
     s = Sensor(self.game, self.screen, 0)
     shift_position = {'angle': 0, 'length': 66}
     self.sensors.append({'sensor': s, 'shift_position': shift_position})
-    # Front right
+    # Front up right
     s = Sensor(self.game, self.screen, -45)
     shift_position = {'angle': -20, 'length': 63}
     self.sensors.append({'sensor': s, 'shift_position': shift_position})
