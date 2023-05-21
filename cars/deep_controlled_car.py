@@ -2,6 +2,7 @@ import pygame
 from cars.autonomous_controlled_car import AutonomousControlledCar
 from cars.controlled_car import ControlledCar
 import math
+import numpy as np
 from world.settings import meter_scale
 
 class DeepControlledCar(AutonomousControlledCar):
@@ -22,10 +23,17 @@ class DeepControlledCar(AutonomousControlledCar):
     if self.parking_spot == None:
       raise Exception("You have to set parking spot")
 
-    inputs = [s['sensor'].actual_length/meter_scale for s in self.sensors]
-    ditance = self.distance_to_parking(self.parking_spot)
-    inputs.append(ditance)
-    # inputs.append(self.angle % 360)
+    inputs = [np.interp(s['sensor'].actual_length , [0, s['sensor'].max_length], [-1, 1]) for s in self.sensors]
+    pivot = self.rect.center
+    car_coordiantes = self.original.get_rect(center = pivot).center
+    parking_coordinates = self.parking_spot.rect.center
+    relative_x = car_coordiantes[0] - parking_coordinates[0]
+    relative_y = parking_coordinates[1] - car_coordiantes[1]
+
+    inputs.append(np.interp(relative_x, [-200, 700], [-1, 1]))
+    inputs.append(np.interp(relative_y, [-20, 157], [-1, 1]))
+    inputs.append(np.interp(self.angle % 360, [0, 360], [-1, 1]))
+
     return inputs
 
   def set_next_action(self, action):
