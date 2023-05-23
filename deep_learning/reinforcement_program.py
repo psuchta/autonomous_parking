@@ -65,6 +65,8 @@ class ReinforcementProgram(BaseProgram):
     current_reward = self.fitness_step(self.autonomous_car, self.parking_slot)
     reward = current_reward - self.previous_reward
     intersection_ratio = self.parking_slot.car_intersection_ratio(self.autonomous_car.rect)
+    if intersection_ratio:
+      reward = 0
 
     if intersection_ratio > self.best_intersection_ratio:
       reward = 1
