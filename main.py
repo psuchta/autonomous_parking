@@ -10,7 +10,8 @@ if __name__ == '__main__':
   # program.run()
 
   program = ParkLearning()
-  program.ppo_learning()
+  # program.ppo_learning()
+  program.ppo_from_file()
+  # program.random_check()
   # program.dqn_learning()
   # program.a2c_learning()
-  # program.random_check()
