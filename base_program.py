@@ -1,6 +1,7 @@
 
 import pygame
 import os
+import random
 from cars.not_steerable_car import NotSteerableCar
 from parking_slot import ParkingSlot
 from world.settings import *
@@ -89,3 +90,8 @@ class BaseProgram:
       pygame.display.flip()
       self.clock.tick(self.fps)
     pygame.quit()
+
+  def get_random_location(self):
+    x = random.randint(400, 850)
+    y = random.randint(380, 440)
+    return x,y

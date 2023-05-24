@@ -52,8 +52,9 @@ class GeneticProgram(BaseProgram):
   def add_game_objects(self):
     car = None
     BaseProgram.add_game_objects(self)
+    random_coordinates = self.get_random_location()
     for idx in range(self.settings['population_size']):
-      car = GeneticControlledCar(700, 430, self.screen, self)
+      car = GeneticControlledCar(random_coordinates[0],random_coordinates[1], self.screen, self)
       self.add_car(car)
 
     numbers_per_chromosome = car.autonomous_steering_logic.number_of_network_weights()
@@ -164,7 +165,8 @@ class GeneticProgram(BaseProgram):
       self.add_generation_to_history(g+1, self.steerable_cars)
 
       self.set_cars_chromosomes(new_population)
-      [car.reset(700, 430) for car in self.steerable_cars]
+      random_coordinates = self.get_random_location()
+      [car.reset(random_coordinates[0], random_coordinates[1]) for car in self.steerable_cars]
     self.draw_history_plot()
     print("Best car in simulation")
     print(best_fitness_car[0])
