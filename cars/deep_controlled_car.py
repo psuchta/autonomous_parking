@@ -13,7 +13,7 @@ class DeepControlledCar(AutonomousControlledCar):
 
   def init_constants(self):
     AutonomousControlledCar.init_constants(self)
-    # self.max_velocity = 1.7
+    self.max_velocity = 2.0
 
   def set_parking_spot(self, parking_spot):
     self.parking_spot = parking_spot
@@ -61,12 +61,10 @@ class DeepControlledCar(AutonomousControlledCar):
     return distance
 
   def map_steering(self, action):
-    up = action == 0
-    down = action == 1
-    upleft = action == 2
-    upright = action == 3
-    downleft = action == 4
-    downright = action == 5
+    up = action[0] == 0
+    down = action[0] == 1
+    left = action[1] == 0
+    right = action[1] == 1
 
     steering_dict = {
       'up': False,
@@ -81,17 +79,8 @@ class DeepControlledCar(AutonomousControlledCar):
     if down == True:
       steering_dict['down'] = True
 
-    if upleft == True:
-      steering_dict['up'] = True
+    if left == True:
       steering_dict['left'] = True
-    if upright == True:
-      steering_dict['up'] = True
-      steering_dict['right'] = True
-
-    if downleft == True:
-      steering_dict['down'] = True
-      steering_dict['left'] = True
-    if downright == True:
-      steering_dict['down'] = True
+    if right == True:
       steering_dict['right'] = True
     return steering_dict
