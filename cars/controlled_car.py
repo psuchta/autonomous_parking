@@ -69,13 +69,13 @@ class ControlledCar(Car):
         self.steering = 0
       else:
         # self.steering -= 30 * dt
-        self.steering -= 45
+        self.steering -= 3
     elif steering_dict['left']:
       if self.steering < 0:
         self.steering = 0
       else:
         # self.steering += 30 * dt
-        self.steering += 45
+        self.steering += 3
     else:
       self.steering = 0
     self.steering = max(-self.max_steering, min(self.steering, self.max_steering))
