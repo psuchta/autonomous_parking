@@ -27,8 +27,9 @@ class NeatProgram(GeneticProgram):
   def add_game_objects(self):
     car = None
     BaseProgram.add_game_objects(self)
+    random_coordinates = self.get_random_location()
     for idx in range(30):
-      car = NeatControlledCar(700, 430, self.screen, self)
+      car = NeatControlledCar(random_coordinates[0], random_coordinates[1], self.screen, self)
       self.add_car(car)
 
   def set_genomes(self, genomes, config):
@@ -37,7 +38,8 @@ class NeatProgram(GeneticProgram):
 
   def run_generation(self, genomes, config):
     self.set_genomes(genomes, config)
-    [car.reset(700, 430) for car in self.steerable_cars]
+    random_coordinates = self.get_random_location()
+    [car.reset(random_coordinates[0], random_coordinates[1]) for car in self.steerable_cars]
     # Call parent's class function
     GeneticProgram.run_generation(self, self.gen_num)
 
