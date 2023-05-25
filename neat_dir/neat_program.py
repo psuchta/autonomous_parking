@@ -9,6 +9,7 @@ import neat
 import random
 import numpy
 import visualize
+import pickle
 
 class NeatProgram(GeneticProgram):
 
@@ -55,14 +56,16 @@ class NeatProgram(GeneticProgram):
     for car in car_population:
       car.chromosome.fitness = car.fitness
 
-
-  def run_neat(self, config_file):
-    # Load configuration.
-    config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
+  def neat_config(self):
+    local_dir = os.path.dirname(__file__)
+    config_file = os.path.join(local_dir, 'settings.txt')
+    return neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          config_file)
 
+  def run(self):
     # Create the population, which is the top-level object for a NEAT run.
+    config = self.neat_config()
     p = neat.Population(config)
 
     # Add a stdout reporter to show progress in the terminal.
@@ -70,17 +73,29 @@ class NeatProgram(GeneticProgram):
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
 
-    winner = p.run(self.run_generation, 200)
+    winner = p.run(self.run_generation, 400)
+    # Save winner to the file
+    with open("winner.pkl", "wb") as f:
+      pickle.dump(winner, f)
+      f.close()
 
     # Draw own statistics
     self.draw_history_plot()
 
     # Neat statistics
     # visualize.plot_stats(stats, ylog=False, view=False, filename="fitness.svg")
-    # visualize.draw_net(config, winner, True)
+    # visualize.draw_net(config, winner, True
 
-  def run(self):
-    local_dir = os.path.dirname(__file__)
-    config_path = os.path.join(local_dir, 'settings.txt')
-    self.run_neat(config_path)
+  def run_from_file(self):
+    # Load nueral network from a file
+    with open('winner.pkl', "rb") as f:
+        genome = pickle.load(f)
+    genomes = [[i, genome] for i in range(30)]
+
+    for _ in range(10):
+      self.run_generation(genomes, self.neat_config())
+
+  def get_random_location(self):
+    return 700, 430
+
 
