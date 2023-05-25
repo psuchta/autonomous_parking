@@ -91,9 +91,9 @@ class ParkLearning():
     return env
 
   def __testing_loop(self, model, env):
-    obs = self.env.reset()
+    obs = env.reset()
     while True:
-      action = model.predict(obs)
+      action, _ = model.predict(obs)
       obs, reward, done, info = env.step(action)
       if done:
         obs = env.reset()
