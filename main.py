@@ -6,12 +6,13 @@ from deep_learning.park_learning import ParkLearning
 
 if __name__ == '__main__':
   # program = GeneticProgram()
-  # program = NeatProgram()
-  # program.run()
+  program = NeatProgram()
+  program.run()
+  # program.run_from_file()
 
-  program = ParkLearning()
+  # program = ParkLearning()
   # program.ppo_learning()
-  program.ppo_from_file()
+  # program.ppo_from_file()
   # program.random_check()
   # program.dqn_learning()
   # program.a2c_learning()
