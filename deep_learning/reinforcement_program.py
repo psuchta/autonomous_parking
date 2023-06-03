@@ -15,15 +15,17 @@ class ReinforcementProgram(BaseProgram):
     self.autonomous_car = self.steerable_cars[0]
     self.n_games = 0
     self.previous_reward = 0
+    self.fps = 30
+    self.best_intersection_ratio = 0
 
   def reset(self):
     self.n_games += 1
-    self.start_time = pygame.time.get_ticks()
-    r_x = random.randint(300, 900)
-    r_y = random.randint(380, 440)
-    [car.reset(700, 430) for car in self.steerable_cars]
+    random_coordinates = self.get_random_location()
+    [car.reset(random_coordinates[0], random_coordinates[1]) for car in self.steerable_cars]
     # [car.reset(400, 430) for car in self.steerable_cars]
-
+    # Change in future
+    self.previous_reward = 10.394337319652962
+    self.best_intersection_ratio = 0
     observation = self.get_state()
     observation = np.array(observation)
 
@@ -32,7 +34,8 @@ class ReinforcementProgram(BaseProgram):
   def add_game_objects(self):
     car = None
     BaseProgram.add_game_objects(self)
-    car = DeepControlledCar(700, 430, self.screen, self)
+
+    car = DeepControlledCar(*self.get_random_location(), self.screen, self)
     self.add_car(car)
     car.set_parking_spot(self.parking_slot)
 
@@ -62,7 +65,15 @@ class ReinforcementProgram(BaseProgram):
     current_reward = self.fitness_step(self.autonomous_car, self.parking_slot)
     reward = current_reward - self.previous_reward
     intersection_ratio = self.parking_slot.car_intersection_ratio(self.autonomous_car.rect)
-    reward += intersection_ratio
+
+    if intersection_ratio:
+      reward = 0
+    
+    if intersection_ratio > self.best_intersection_ratio:
+      reward = 0.1
+      self.best_intersection_ratio = intersection_ratio
+    if(intersection_ratio > 0.70):
+      reward = 1
 
     self.previous_reward = current_reward
     # Did car hit something
@@ -79,8 +90,8 @@ class ReinforcementProgram(BaseProgram):
 
   def step(self, action):
     self.autonomous_car.set_next_action(action)
-    dt = self.clock.get_time() / 1000
-
+    # dt = self.clock.get_time() / 1000
+    dt = 0.033
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         self.exit = True
@@ -101,3 +112,6 @@ class ReinforcementProgram(BaseProgram):
 
   def close(self):
     pygame.quit()
+
+  def get_random_location(self):
+    return 700, 430

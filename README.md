@@ -20,3 +20,6 @@ python main.py
 # To run all tests 
 
 `python3 -m unittest discover tests`
+
+# Start tensorboard
+`tensorboard --logdir deep_learning/tensorboard_logs/ppo_learning`
