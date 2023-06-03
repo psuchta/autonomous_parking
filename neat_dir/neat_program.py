@@ -95,7 +95,7 @@ class NeatProgram(GeneticProgram):
     for _ in range(10):
       self.run_generation(genomes, self.neat_config())
 
-  # def get_random_location(self):
-    # return 700, 430
+  def get_random_location(self):
+    return 700, 430
 
 
