@@ -67,21 +67,20 @@ class ReinforcementProgram(BaseProgram):
     intersection_ratio = self.parking_slot.car_intersection_ratio(self.autonomous_car.rect)
 
     if intersection_ratio:
-      if reward == 0:
-        reward = intersection_ratio
-      else:
-        reward = 0
-
-    # if intersection_ratio > self.best_intersection_ratio:
-    #   reward = 1
-    #   self.best_intersection_ratio = intersection_ratio
+      reward = 0
+    
+    if intersection_ratio > self.best_intersection_ratio:
+      reward = 0.1
+      self.best_intersection_ratio = intersection_ratio
+    if(intersection_ratio > 0.70):
+      reward = 1
 
     self.previous_reward = current_reward
     # Did car hit something
     is_done = (not self.autonomous_car.alive)
     if is_done:
       self.previous_reward = 0
-      reward = -100
+      reward = -1
     return reward, is_done
 
   def draw_generation_num(self):
@@ -113,3 +112,6 @@ class ReinforcementProgram(BaseProgram):
 
   def close(self):
     pygame.quit()
+
+  def get_random_location(self):
+    return 700, 430

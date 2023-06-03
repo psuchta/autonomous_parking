@@ -8,6 +8,7 @@ if __name__ == '__main__':
   # program = GeneticProgram()
   program = NeatProgram()
   program.run()
+  # NEAT Loading form file 
   # program.run_from_file()
 
   # program = ParkLearning()
