@@ -73,7 +73,7 @@ class NeatProgram(GeneticProgram):
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
 
-    winner = p.run(self.run_generation, 400)
+    winner = p.run(self.run_generation, 500)
     # Save winner to the file
     with open("winner.pkl", "wb") as f:
       pickle.dump(winner, f)
@@ -95,7 +95,7 @@ class NeatProgram(GeneticProgram):
     for _ in range(10):
       self.run_generation(genomes, self.neat_config())
 
-  def get_random_location(self):
-    return 700, 430
+  # def get_random_location(self):
+    # return 700, 430
 
 
