@@ -22,7 +22,7 @@ class DeepControlledCar(AutonomousControlledCar):
   def get_sensors_data(self):
     if self.parking_spot == None:
       raise Exception("You have to set parking spot")
-
+    # Scale env observations to [-1,1] range
     inputs = [np.interp(s['sensor'].actual_length , [0, s['sensor'].max_length], [-1, 1]) for s in self.sensors]
     pivot = self.rect.center
     car_coordiantes = self.original.get_rect(center = pivot).center
