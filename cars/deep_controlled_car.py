@@ -45,6 +45,7 @@ class DeepControlledCar(AutonomousControlledCar):
   # def get_steering_dict(self):
     # return ControlledCar.get_steering_dict(self)
 
+  # TODO refactor this method
   def distance_to_parking(self, parking_spot):
     distances = []
     pivot = self.rect.center
